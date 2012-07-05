@@ -26,7 +26,7 @@ width:66px !important;
     padding: 3px;
     width: 11px;
 }
-#matrix_table tr td.new-selected {
+#matrix_table tr td.selected {
     background-color: rgb(179,212,255);
 }
 

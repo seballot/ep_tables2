@@ -1,31 +1,16 @@
-/**
-
- * DatatablesRenderer
-
- * 
-
- * @version
-
- * 1.0.??? (July 1 2012)
-
- * 
-
- */
-//
-// Begin anonymous function. This is used to contain local scope variables without polutting global scope.
-//
 if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = function () {
-        var dtRenderer = {
+        var dRenderer = {
             render: function (params, element, attributes) {
+                var renderer = new DatatablesRenderer.Renderer();
                 if (element.innerText) code = element.innerText;
                 else code = element.textContent;
-                element.innerHTML = DatatablesRenderer.getHtml(code, attributes);
+                element.innerHTML = renderer.getHtml(code, attributes);
             }
+        }; // end of dRenderer
+        dRenderer.Renderer = function () {
+            //	
         };
-        dtRenderer.Renderer = function () {
-            // not putting any code in here because of the prototype inheritance
-        };
-        dtRenderer.Renderer.prototype = {
+        dRenderer.Renderer.prototype = {
             createDefaultTblProperties: function (authors) {
                 return {
                     borderWidth: "1",
@@ -183,15 +168,6 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 attrValue = isNaN(intAttrValue) ? parseFloat(attrValue) : intAttrValue;
                 return 96 * attrValue - 1;
             },
-            /**
-
-	 * Generates HTML markup for Domline.
-
-	 * @param {String} code Source code.
-
-	 * @return {String} Returns HTML markup.
-
-	 */
             getHtml: function (code, attributes) {
                 var JSONCode = "";
                 var html = "";
@@ -200,9 +176,9 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     html = this.buildTabularData(JSONCode, attributes);
                 } catch (error) {}
                 return html;
-            }
-        }; // end of Renderer
-        return dtRenderer;
+            },
+        };
+        return dRenderer;
     }(); // end of anonymous function
 // CommonJS
 typeof (exports) != 'undefined' ? exports.DatatablesRenderer = DatatablesRenderer : null;

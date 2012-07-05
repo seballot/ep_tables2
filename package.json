@@ -1,5 +1,8 @@
 {
-  "author": "Gedion Woldeselassie <gwy321@gmail.com>",
+  "author": {
+    "name": "Gedion Woldeselassie",
+    "email": "gwy321@gmail.com"
+  },
   "name": "ep_datatables",
   "description": "Adds datatables to etherpad-lite",
   "version": "0.1.0",
@@ -14,5 +17,13 @@
     "ep_etherpad-lite": "1.0.x"
   },
   "devDependencies": {},
-  "optionalDependencies": {}
+  "optionalDependencies": {},
+  "_id": "ep_datatables@0.1.0",
+  "_engineSupported": true,
+  "_npmVersion": "1.1.21",
+  "_nodeVersion": "v0.6.16",
+  "_defaultsLoaded": true,
+  "_from": "ep_datatables"
 }
+
+
