@@ -1,3 +1,4 @@
+var _ = require('ep_etherpad-lite/static/js/underscore');
 // CommonJS
 if (typeof (require) != 'undefined'){
     if(typeof (Ace2Common) == 'undefined') {
