@@ -1,0 +1,565 @@
+// CommonJS
+if (typeof (require) != 'undefined'){
+    if(typeof (Ace2Common) == 'undefined') {
+    	Ace2Common = require('ep_etherpad-lite/static/js/ace2_common');
+	}
+
+    if(typeof (Changeset) == 'undefined') {
+		Changeset = require('ep_etherpad-lite/static/js/Changeset'); 
+	}
+}
+
+
+// Our heading attribute will result in a heaading:h1... :h6 class
+ exports.aceAttribsToClasses = function(hook, context){
+	Datatables.attributes  = null; 
+	if(context.key == 'tblProp'){
+	    Datatables.attributes = context.value;
+	    return ['tblProp:' + context.value ];
+	  }
+}
+
+
+exports.aceLineAndCharForPoint = function (hook, context) {
+    try {
+	Datatables.context = context;
+        if (Datatables.isFocused()) {
+            Datatables.getLineAndCharForPoint();
+        }
+    } catch (error) {
+        top.console.log('error ' + error);
+        top.console.log('context rep' + Datatables.context.rep);
+    }
+};
+
+
+exports.aceKeyEvent = function (hook, context) {
+    try {
+       
+	Datatables.context = context;
+        if (Datatables.isFocused()) {
+            var evt = context.evt;
+            var type = evt.type;
+            var keyCode = evt.keyCode;
+            var isTypeForSpecialKey = ((Ace2Common.browser.msie || Ace2Common.browser.safari) ? (type == "keydown") : (type == "keypress"));
+            var isTypeForCmdKey = ((Ace2Common.browser.msie || Ace2Common.browser.safari) ? (type == "keydown") : (type == "keypress"));
+            var which = evt.which;
+            if ((!context.specialHandled) && isTypeForSpecialKey && keyCode == 9 && !(evt.metaKey || evt.ctrlKey)) {
+                context.editorInfo.ace_fastIncorp(5);
+                evt.preventDefault();
+                Datatables.performDocumentTableTabKey();
+                context.editorInfo.specialHandled = true;
+            }
+            if ((!context.specialHandled) && isTypeForSpecialKey && keyCode == 13) {
+                // return key, handle specially;
+                context.editorInfo.ace_fastIncorp(5);
+                evt.preventDefault();
+                Datatables.doReturnKey();
+                context.editorInfo.specialHandled = true;
+            }
+            if (isTypeForSpecialKey && (keyCode == Datatables.vars.JS_KEY_CODE_DEL || keyCode == Datatables.vars.JS_KEY_CODE_BS || (String.fromCharCode(which).toLowerCase() == "h" && (evt.ctrlKey)))) {
+                context.editorInfo.ace_fastIncorp(20);
+                evt.preventDefault();
+                context.editorInfo.specialHandled = true;
+                if (Datatables.isCellDeleteOk(keyCode)) {
+                    Datatables.doDeleteKey();
+                }
+            }
+        }
+    } catch (error) {}
+};
+
+
+if (typeof (Datatables) == 'undefined') var Datatables = function () {
+
+
+        // Get the text within an element
+        // Doesn't do any normalising, returns a string
+        // of text as found.
+        function nodeText(n) {
+            var text = [];
+            var self = arguments.callee;
+            var el, els = n.childNodes;
+            var excluded = {
+                'noscript': 'noscript',
+                'script': 'script',
+            };
+
+            for (var i = 0, iLen = els.length; i < iLen; i++) {
+                el = els[i];
+
+                // May need to add other node types here
+                if (el.nodeType == 1 && !(el.tagName.toLowerCase() in excluded)) {
+                    text.push(self(el));
+
+                    // If working with XML, add nodeType 4 to get text from CDATA nodes
+                } else if (el.nodeType == 3) {
+
+                    // Deal with extra whitespace and returns in text here.
+                    text.push(el.data);
+                }
+            }
+            return text.join('');
+        }
+        var dt = {
+            defaults: {
+		tblProps: {borderWidth:"1",cellAttrs:[],width:"6",rowAttrs:{},colAttrs:[],authors:{}}
+		},
+            config: {},
+            /** Internal 'global' variables. */
+            vars: {
+                OVERHEAD_LEN_PRE: '{"payload":[["'.length,
+                OVERHEAD_LEN_MID: '","'.length,
+                OVERHEAD_LEN_ROW_START: '["'.length,
+                OVERHEAD_LEN_ROW_END: '"],'.length,
+                JS_KEY_CODE_BS: 8,
+                JS_KEY_CODE_DEL: 46
+            },
+
+	     /* passed parameters */
+	   context:null
+        }; // end of dt
+
+
+        dt.isFocused = function () {
+            if (!this.context.rep.selStart || !this.context.rep.selEnd) return false;
+            var line = this.context.rep.lines.atIndex(this.context.rep.selStart[0]);
+            if (!line) return false;
+            var currLineText = line.text || '';
+            if (currLineText.indexOf("data-tables") == -1) {
+                return false;
+            }
+            return true;
+        };
+        /* Helper function. not meant to be used as a standalone function
+			   requires rowStartOffset
+			 */
+        dt._getRowEndOffset = function (rowStartOffset, tds) {
+            var rowEndOffset = rowStartOffset + this.vars.OVERHEAD_LEN_ROW_START;
+            for (var i = 0, len = tds.length; i < len; i++) {
+                var overHeadLen = this.vars.OVERHEAD_LEN_MID;
+                if (i == len - 1) {
+                    overHeadLen = this.vars.OVERHEAD_LEN_ROW_END;
+                }
+                rowEndOffset += tds[i].length + overHeadLen;
+            }
+            return rowEndOffset;
+        }
+        /**
+			current row index, 
+			td index ,
+			the length of leftover text of the current cell,
+			current row start offset,
+			current row end offset,
+			current td start offset,
+			current td end offset,
+			and cellCaretPos
+		*/
+        dt.getFocusedTdInfo = function (payload, colStart) {
+            var payloadOffset = colStart - this.vars.OVERHEAD_LEN_PRE;
+            var rowStartOffset = 0;
+            var payloadSum = 0;
+            for (var rIndex = 0, rLen = payload.length; rIndex < rLen; rIndex++) {
+                var tds = payload[rIndex];
+                for (var tIndex = 0, tLen = tds.length; tIndex < tLen; tIndex++) {
+                    var overHeadLen = this.vars.OVERHEAD_LEN_MID;
+                    if (tIndex == tLen - 1) {
+                        overHeadLen = this.vars.OVERHEAD_LEN_ROW_END;
+                    }
+                    payloadSum += tds[tIndex].length + overHeadLen;
+                    if (payloadSum >= payloadOffset) {
+                        if (payloadSum == payloadOffset) {
+                            tIndex++;
+                        }
+                        var leftOverTdTxtLen = payloadSum - payloadOffset == 0 ? payload[rIndex][tIndex].length + this.vars.OVERHEAD_LEN_MID : payloadSum - payloadOffset;
+                        var cellCaretPos = tds[tIndex].length - (leftOverTdTxtLen - overHeadLen);
+                        var rowEndOffset = this._getRowEndOffset(rowStartOffset, tds);
+                        return {
+                            row: rIndex,
+                            td: tIndex,
+                            leftOverTdTxtLen: leftOverTdTxtLen,
+                            rowStartOffset: rowStartOffset,
+                            rowEndOffset: rowEndOffset,
+                            cellStartOffset: payloadSum - tds[tIndex].length - overHeadLen,
+                            cellEndOffset: payloadSum,
+                            cellCaretPos: cellCaretPos
+                        };
+                    }
+                }
+                rowStartOffset = payloadSum;
+                payloadSum += this.vars.OVERHEAD_LEN_ROW_START;
+            }
+        };
+
+        dt.printCaretPos = function (start, end) {
+            top.console.log(JSON.stringify(start));
+            top.console.log(JSON.stringify(end));
+        };
+        /* handles tab key within a table */
+        dt.performDocumentTableTabKey = function () {
+            try {
+		var context = this.context;
+                var rep = context.rep;
+                var currLine = rep.lines.atIndex(rep.selStart[0]);
+                var currLineText = currLine.text;
+                var tblJSONObj = JSON.parse(currLineText);
+                var payload = tblJSONObj.payload;
+                var currTdInfo = this.getFocusedTdInfo(payload, rep.selStart[1]);
+                var leftOverTdTxtLen = currTdInfo.leftOverTdTxtLen;
+                var currRow = currTdInfo.row;
+                var currTd = currTdInfo.td;
+                if (typeof (payload[currRow][currTd + 1]) == "undefined") { //next row
+                    currRow += 1;
+                    var nextLine = rep.lines.atIndex(rep.selStart[0] + 1);
+                    var nextLineText = nextLine.text;
+                    var updateEvenOddBgColor = false;
+                    if (nextLineText == null || nextLineText == '' || nextLineText.indexOf('data-tables') == -1) { //create new row and move caret to this new row
+                        this.insertTblRowBelow(null, null, context);
+                        //performDocApplyTblAttrToRow(rep.selStart, createDefaultTblProperties());
+                        rep.selEnd[1] = rep.selStart[1] = this.vars.OVERHEAD_LEN_PRE;
+                        updateEvenOddBgColor = true;
+                    } else { //just move caret to existing next row
+                        currTd = -1;
+                        rep.selStart[0] = rep.selEnd[0] = rep.selStart[0] + 1;
+                        var tblJSONObj = JSON.parse(nextLineText);
+                        var payload = tblJSONObj.payload;
+                        leftOverTdTxtLen = payload[0][0].length;
+                        rep.selEnd[1] = rep.selStart[1] = this.vars.OVERHEAD_LEN_PRE + leftOverTdTxtLen;
+                    }
+                    context.editorInfo.ace_performDocumentReplaceRange(rep.selStart, rep.selEnd, "");
+                    var start = [];
+                    start[0] = rep.selStart[0];
+                    start[1] = rep.selStart[1];
+
+                    //updateTblCellAuthor(0, 0, null, start, updateEvenOddBgColor); //this requires removing potential user color in a differnt row(although it should only check the previous row)			
+                } else { //tab to the next col and update cell user color
+                    var nextTdTxtLen = typeof (payload[currRow]) == 'undefined' ? -leftOverTdTxtLen : payload[currRow][currTd + 1].length;
+                    payload = tblJSONObj.payload;
+                    rep.selStart[1] = rep.selEnd[1] = rep.selEnd[1] + nextTdTxtLen + leftOverTdTxtLen;
+                    context.editorInfo.ace_performDocumentReplaceRange(rep.selStart, rep.selEnd, "");
+		  // debugger;
+                   dt.updateTblPropInAPool(currRow,currTd+1,null,rep.selStart);//this need not to update entire table of color setting		
+                }
+
+            } catch (error) {
+
+            }
+        };
+
+
+        dt.insertTblRowBelow = function (numOfRows, table, context) {
+            var rep = context.rep;
+            var currLineText = rep.lines.atIndex(rep.selStart[0]).text;
+            var payload = [
+                []
+            ];
+            if (!numOfRows && numOfRows != 0) {
+                var tblPayload = JSON.parse(currLineText).payload;
+                numOfRows = tblPayload[0].length;
+            }
+            var tblRows = new Array(numOfRows);
+            if (numOfRows != 0) {
+                for (var i = 0; i < tblRows.length; i++) {
+                    tblRows[i] = " ";
+                }
+            }
+
+            payload = [tblRows];
+
+            if (table) {
+                payload = table.payload;
+            }
+            tableObj = {
+                "payload": payload,
+                "tblId": 1,
+                "tblClass": "data-tables",
+                "trClass": "alst",
+                "tdClass": "hide-el"
+            }
+            rep.selEnd[1] = rep.selStart[1] = currLineText.length;
+            context.editorInfo.ace_doReturnKey();
+            context.editorInfo.ace_performDocumentReplaceRange(rep.selStart, rep.selEnd, JSON.stringify(tableObj));
+        };
+
+
+        dt.doReturnKey = function () {
+	    var context = this.context;
+            var rep = context.rep;
+            var start = rep.seStart;
+            var end = rep.selEnd;
+            lastTblPropertyUsed = 'doTableReturnKey';
+            var currLine = rep.lines.atIndex(rep.selStart[0]);
+            var currLineText = currLine.text;
+            if (currLineText.indexOf('data-tables') == -1) return false;
+
+            else {
+                var func = 'doTableReturnKey()';
+                try {
+                    var currCarretPos = rep.selStart[1];
+                    if (currLineText.substring(currCarretPos - 1, currCarretPos + 2) == '","') return true;
+                    else if (currLineText.substring(currCarretPos - 2, currCarretPos + 1) == '","') return true;
+                    else if (currCarretPos < this.vars.OVERHEAD_LEN_PRE) return true;
+                    else if (currCarretPos > currLineText.length) return true;
+                    var start = rep.selStart,
+                        end = rep.selEnd;
+                    newText = " /r/n ";
+                    start[1] = currCarretPos;
+                    end[1] = currCarretPos;
+                    try {
+                        var jsonObj = JSON.parse(currLineText.substring(0, start[1]) + newText + currLineText.substring(start[1]));
+                        payloadStr = JSON.stringify(jsonObj.payload);
+                        if (currCarretPos > payloadStr.length + this.vars.OVERHEAD_LEN_PRE - 2) {
+                            return true;
+                        }
+
+                    } catch (error) {
+                        return true;
+                    }
+                    context.editorInfo.ace_performDocumentReplaceRange(start, end, newText);
+                } catch (error) {}
+                return true;
+            }
+        };
+        dt.isCellDeleteOk = function (keyCode) {
+	    var context = this.context;
+            var rep = context.rep;
+            var start = rep.selStart;
+            var end = rep.selEnd;
+            var currLine = rep.lines.atIndex(rep.selStart[0]);
+            var currLineText = currLine.text;
+            if (currLineText.indexOf('data-tables') == -1) return true;
+            var isDeleteAccepted = false;
+            try {
+                var tblJSONObj = JSON.parse(currLineText);
+                var table = tblJSONObj.payload;
+                var currTdInfo = this.getFocusedTdInfo(table, rep.selStart[1]);
+                cellEntryLen = table[currTdInfo.row][currTdInfo.td].length;
+                var currCarretPos = rep.selStart[1];
+                if (currLineText.substring(currCarretPos - 1, currCarretPos + 2) == '","') return false;
+                else if (currLineText.substring(currCarretPos - 2, currCarretPos + 1) == '","') return false;
+                switch (keyCode) {
+                case this.vars.JS_KEY_CODE_BS:
+                    if (cellEntryLen != 0 && cellEntryLen > (currTdInfo.leftOverTdTxtLen - this.vars.OVERHEAD_LEN_MID)) {
+                        isDeleteAccepted = true;
+                    }
+                    break;
+                case this.vars.JS_KEY_CODE_DEL:
+                    return false; //disabled for the moment				
+                    if (cellEntryLen != 0 && currTdInfo.leftOverTdTxtLen - this.vars.OVERHEAD_LEN_MID > 0) {
+                        isDeleteAccepted = true;
+                    }
+                    break;
+                default:
+                    // cntrl H		 
+                    if (cellEntryLen != 0 && cellEntryLen > (currTdInfo.leftOverTdTxtLen - this.vars.OVERHEAD_LEN_MID)) {
+                        isDeleteAccepted = true;
+                    }
+                    break;
+                }
+            } catch (error) {
+                isDeleteAccepted = false;
+            }
+            return isDeleteAccepted;
+        };
+        dt.nodeTextPlain = function (n) {
+            return n.innerText || n.textContent || n.nodeValue || '';
+        }
+
+
+        // Get the text within an element
+        // Doesn't do any normalising, returns a string
+        // of text as found.
+        dt.toString = function () {
+            return "ep_datatables";
+        };
+
+
+        dt.getLineAndCharForPoint = function () {
+	    var context = this.context;
+            var point = context.point;
+            var root = context.root;
+            // Turn DOM node selection into [line,char] selection.
+            // This method has to work when the DOM is not pristine,
+            // assuming the point is not in a dirty node.
+            if (point.node == root) {
+                if (point.index == 0) {
+                    context.editorInfo.lineAndChar = [0, 0];
+                    return;
+                } else {
+                    var N = this.context.rep.lines.length();
+                    var ln = this.context.rep.lines.atIndex(N - 1);
+                    context.editorInfo.lineAndChar = [N - 1, ln.text.length];
+                    return;
+                }
+            } else {
+                var n = point.node;
+                var col = 0;
+                // if this part fails, it probably means the selection node
+                // was dirty, and we didn't see it when collecting dirty nodes.
+                if (nodeText(n) || point.index > 0) {
+                    col = point.index;
+                }
+                var parNode, prevSib;
+                while ((parNode = n.parentNode) != root) {
+                    if ((prevSib = n.previousSibling)) {
+                        n = prevSib;
+                        var textLen = nodeText(n).length == 0 ? this.nodeTextPlain(n).length : nodeText(n).length;
+                        col += textLen;
+                    } else {
+                        n = parNode;
+                    }
+                }
+                if (n.id == "") console.debug("BAD");
+                if (n.firstChild && context.editorInfo.ace_isBlockElement(n.firstChild)) {
+                    col += 1; // lineMarker
+                }
+                var lineEntry = this.context.rep.lines.atKey(n.id);
+                var lineNum = this.context.rep.lines.indexOfEntry(lineEntry);
+                context.editorInfo.lineAndChar = [lineNum, col];
+                return;
+            }
+        };
+
+        dt.doDeleteKey = function () {
+	    var context = this.context;
+            var evt = context.evt || {};
+            var handled = false;
+            var rep = this.context.rep;
+            var editorInfo = context.editorInfo;
+            if (rep.selStart) {
+                //end tbl-mod-by-wlos
+                if (editorInfo.ace_isCaret()) {
+                    var lineNum = editorInfo.ace_caretLine();
+                    var col = editorInfo.ace_caretColumn();
+                    var lineEntry = rep.lines.atIndex(lineNum);
+                    var lineText = lineEntry.text;
+                    var lineMarker = lineEntry.lineMarker;
+                    if (/^ +$/.exec(lineText.substring(lineMarker, col))) {
+                        var col2 = col - lineMarker;
+                        var tabSize = ''.length; // zero for now, tabs are not supported within tables
+                        var toDelete = ((col2 - 1) % tabSize) + 1;
+                        editorInfo.ace_performDocumentReplaceRange([lineNum, col - toDelete], [lineNum, col], '');
+                        //scrollSelectionIntoView();
+                        handled = true;
+                    }
+                }
+                if (!handled) {
+                    if (editorInfo.ace_isCaret()) {
+                        var theLine = editorInfo.ace_caretLine();
+                        var lineEntry = rep.lines.atIndex(theLine);
+                        if (editorInfo.ace_caretColumn() <= lineEntry.lineMarker) {
+                            // delete at beginning of line
+                            var action = 'delete_newline';
+                            var prevLineListType = (theLine > 0 ? editorInfo.ace_getLineListType(theLine - 1) : '');
+                            var thisLineListType = editorInfo.ace_getLineListType(theLine);
+                            var prevLineEntry = (theLine > 0 && rep.lines.atIndex(theLine - 1));
+                            var prevLineBlank = (prevLineEntry && prevLineEntry.text.length == prevLineEntry.lineMarker);
+                            if (thisLineListType) {
+                                // this line is a list
+                                if (prevLineBlank && !prevLineListType) {
+                                    // previous line is blank, remove it
+                                    editorInfo.ace_performDocumentReplaceRange([theLine - 1, prevLineEntry.text.length], [theLine, 0], '');
+                                } else {
+                                    // delistify
+                                    editorInfo.ace_performDocumentReplaceRange([theLine, 0], [theLine, lineEntry.lineMarker], '');
+                                }
+                            } else if (theLine > 0) {
+                                // remove newline
+                                editorInfo.ace_performDocumentReplaceRange([theLine - 1, prevLineEntry.text.length], [theLine, 0], '');
+                            }
+                        } else {
+                            var docChar = editorInfo.ace_caretDocChar();
+                            if (docChar > 0) {
+                                if (evt.metaKey || evt.ctrlKey || evt.altKey) {
+                                    // delete as many unicode "letters or digits" in a row as possible;
+                                    // always delete one char, delete further even if that first char
+                                    // isn't actually a word char.
+                                    var deleteBackTo = docChar - 1;
+                                    while (deleteBackTo > lineEntry.lineMarker && editorInfo.ace_isWordChar(rep.alltext.charAt(deleteBackTo - 1))) {
+                                        deleteBackTo--;
+                                    }
+                                    editorInfo.ace_performDocumentReplaceCharRange(deleteBackTo, docChar, '');
+                                } else {
+                                    var returnKeyWitinTblOffset = 0;
+                                    if (lineText.substring(col - 5, col) == '/r/n ') {
+                                        returnKeyWitinTblOffset = 4;
+                                    }
+                                    // normal or table return key delete
+                                    editorInfo.ace_performDocumentReplaceCharRange(docChar - 1 - returnKeyWitinTblOffset, docChar, '');
+                                }
+                            }
+                        }
+                    } else {
+                        editorInfo.ace_performDocumentReplaceRange(rep.selStart, rep.selEnd, "");
+                    }
+                }
+            }
+            //if the list has been removed, it is necessary to renumber
+            //starting from the *next* line because the list may have been
+            //separated. If it returns null, it means that the list was not cut, try
+            //from the current one.
+            var line = editorInfo.ace_caretLine();
+            if (line != -1 && editorInfo.ace_renumberList(line + 1) === null) {
+                editorInfo.ace_renumberList(line);
+            }
+        };
+
+
+	 dt.getLineTableProperty = function(lineNum)
+	  {
+	    var rep = this.context.rep;
+	    // get "tblProp" attribute of first char of line
+	    var aline = rep.alines[lineNum];
+	    if (aline)
+	    {
+	      var opIter = Changeset.opIterator(aline);
+	      if (opIter.hasNext())
+	      {
+		var tblJSString =  Changeset.opAttributeValue(opIter.next(), 'tblProp', rep.apool) ;
+			try{
+				return JSON.parse(tblJSString);	
+			}catch(error){
+				return this.defaults.tblProps;
+			}
+	      }
+	    }
+	    return this.defaults.tblProps;
+	  };
+
+	dt.updateTblPropInAPool = function (row, td, jsoTblProp, start) {
+	    try {
+		var rep = this.context.rep;
+		var tblProps;
+		var editorIfno = this.context.editorInfo;		
+		var thisAuthor = editorIfno.ace_getThisAuthor();
+		var authorInfos = editorIfno.ace_getAuthorInfos();
+		if (typeof (jsoTblProp) == 'undefined' || jsoTblProp == null) {
+		    jsoTblProp = this.getLineTableProperty(start[0]);
+		}
+		if (row != -1 && td != -1) {
+		    jsoTblProp['authors'][thisAuthor] = {
+		        row: row,
+		        cell: td,
+		        colorId: authorInfos[thisAuthor].bgcolor
+		    };
+		}
+		var jsoStrTblProp = JSON.stringify(jsoTblProp);
+
+		var attrStart = [],
+		    attrEnd = [];
+		attrStart[0] = start[0], attrStart[1] = 0;
+		attrEnd[0] = start[0], attrEnd[1] = rep.lines.atIndex(start[0]).text.length;
+		debugger;
+		editorIfno.ace_performDocumentApplyAttributesToRange(attrStart, attrEnd, [
+		    ["tblProp", jsoStrTblProp]
+		]);
+	    } catch (error) {
+		//createErrorState(start, start, 'updateTblPropInAPool', rep.lines.atIndex(start[0]).text, [row,td], [row,td], "", error);
+	    }
+	};
+
+        return dt;
+
+    }(); // end of anonymous function
+
+typeof (exports) != 'undefined' ? exports.Datatables = Datatables : null;
