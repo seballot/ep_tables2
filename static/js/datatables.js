@@ -1799,7 +1799,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
             var rep = this.context.rep;
             var numOfLinesAbove = 0;
             var line = start[0] - 1;
-            while (rep.lines.atIndex(line).text.indexOf('data-tables') != -1) { //count num of rows above current pos
+            while (line >= 0 && rep.lines.atIndex(line).text.indexOf('data-tables') != -1) { //count num of rows above current pos
                 numOfLinesAbove++;
                 line--;
             }
