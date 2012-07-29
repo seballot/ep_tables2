@@ -49,7 +49,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var authors = tblProperties.authors;
                 var printViewTBlStyles = "table-layout:fixed !important;border-collapse:collapse!important;font-family:Trebuchet MS!important;";
                 var printViewTblTDStyles = "font-size: 1em!important;line-height: 1em!important;padding: 3px 7px 2px!important;word-wrap: break-word!important;"
-                var htmlTbl = "<table class='" + tblClass + "' style='" + printViewTBlStyles + "background-color:white;width:" + tblWidth + "px!important;height:" + tblHeight + "px!important; border-top: " + tblBorderWidth + "px solid " + tblBorderColor + "!important;" + "'><tbody>";
+                var htmlTbl = "<table class='" + tblClass + "' style='" + printViewTBlStyles + "background-color:white;width:" + tblWidth + "px;height:" + tblHeight + "px; border-top: " + tblBorderWidth + "px solid " + tblBorderColor + "!important;" + "'><tbody>";
                 var borders = "border-bottom:" + tblBorderWidth + "px solid " + tblBorderColor;
                 var rowVAlign = typeof (rowAttrs) == 'undefined' || rowAttrs == null ? "left" : rowAttrs.rowVAlign || "left";
                 var rows = tblJSONObj.payload;

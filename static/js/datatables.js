@@ -625,11 +625,37 @@ exports.postAceInit = function (hook, context) {
     $("body").append($('<div id="yui-picker-panel" class="yui-picker-panel">' + '<div class="hd">Please choose a color:</div>' + '<div class="bd">' + '	<div class="yui-picker" id="color-picker-menu"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
     $("body").append($('<div id="yui-tbl-prop-panel" class="yui-picker-panel">' + '<div class="hd">Table/Image Properties</div>' + '<div class="bd">' + '	<div class="yui-picker" id="tbl-props"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
     $.createTableMenu(true);
+  $("#editbar [data-key]").each(function (i, e) {
+        $(e).click(function (event) {	
+    	 context.ace.callWithAce(function (ace) {
+                ace.ace_toggleTableAttributeOnSelection($(e).attr('data-key'));
+            }, 'tblOptions', true);
+          event.preventDefault();
+        });
+   });
+
+$(window.frames[1].frames[0].document).on("click",  
+	function (event) {	
+	  event.preventDefault();
+	 context.ace.callWithAce(function (ace) {
+	        ace.ace_handleTableClick();
+	    }, 'tblOptions', true);
+	}
+);
+
+	
+
 };
+
+
 // Once ace is initialized, we set ace_doDatatableOptions and bind it to the context
 exports.aceInitialized = function (hook, context) {
     var editorInfo = context.editorInfo;
     editorInfo.ace_doDatatableOptions = _(Datatables.doDatatableOptions).bind(context);
+    editorInfo.ace_toggleTableAttributeOnSelection = _(Datatables.toggleTableAttributeOnSelection).bind(context);
+    editorInfo.ace_handleTableClick = _(Datatables.handleTableClick).bind(context);
+    editorInfo.ace_handleMouseUp = _(Datatables.handleMouseUp).bind(context);
+    $(window.frames[1].frames[0].document).on("mouseup", editorInfo.ace_handleMouseUp);
 };
 exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
     // Iterate through the child nodes (spans) and point SyntaxHighlighter at them
@@ -675,6 +701,8 @@ exports.aceLineAndCharForPoint = function (hook, context) {
         top.console.log('context rep' + Datatables.context.rep);
     }
 };
+
+
 exports.aceKeyEvent = function (hook, context) {
     try {
         Datatables.context = context;
@@ -706,6 +734,31 @@ exports.aceKeyEvent = function (hook, context) {
                     Datatables.doDeleteKey();
                 }
             }
+  	if (isTypeForCmdKey && String.fromCharCode(which).toLowerCase() == "b" && (evt.metaKey || evt.ctrlKey))
+        {	
+          // cmd-B (bold)
+          context.editorInfo.ace_fastIncorp(13);
+          evt.preventDefault();
+          Datatables.toggleTableAttributeOnSelection('bold');
+          context.editorInfo.specialHandled = true;
+        }
+        if (isTypeForCmdKey && String.fromCharCode(which).toLowerCase() == "i" && (evt.metaKey || evt.ctrlKey))
+        {
+          // cmd-I (italic)
+          context.editorInfo.ace_fastIncorp(14);
+          evt.preventDefault();
+           Datatables.toggleTableAttributeOnSelection('italic');
+          context.editorInfo.specialHandled = true;
+        }
+        if (isTypeForCmdKey && String.fromCharCode(which).toLowerCase() == "u" && (evt.metaKey || evt.ctrlKey))
+        {
+          // cmd-U (underline)
+           context.editorInfo.ace_fastIncorp(15);
+          evt.preventDefault();
+           Datatables.toggleTableAttributeOnSelection('underline');
+          context.editorInfo.specialHandled = true;
+        }
+
         }
     } catch (error) {}
 };
@@ -839,6 +892,118 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 payloadSum += this.vars.OVERHEAD_LEN_ROW_START;
             }
         };
+
+   dt.getAttrInInch = function(attrValue) {
+     attrValue = attrValue==null?null:attrValue.substring(0,attrValue.length-2);
+      var intAttrValue = 0;
+      intAttrValue = parseFloat(attrValue);
+      attrValue = isNaN(intAttrValue) ? parseFloat(attrValue) : intAttrValue;
+
+      return (attrValue + 1)/96;
+  }
+  
+
+   dt.handleMouseUp = function (evt) {	
+       var context = this;
+	context.editorInfo.ace_inCallStackIfNecessary("handleMouseUp", function(){
+	       Datatables.context = context;
+	       var rep = context.rep;
+	       var currLine = rep.lines.atIndex(rep.selStart[0]);
+	       var currLineText = currLine.text;
+	       if (currLineText.indexOf('data-tables') == -1) {
+		   return false;
+	       }
+	       var line = rep.lines.atIndex(rep.selStart[0]);
+	       lineNode = line.lineNode;
+	       spanEl = lineNode.childNodes[0];
+	       tableEl = spanEl.childNodes[0];
+	       var heightInInch = Datatables.getAttrInInch(tableEl.style.height);
+	       if (!isNaN(heightInInch)) {
+		   Datatables.updateTablePropertiesHelper({
+		       "tblHeight": true,
+		       "attrName": "height",
+		       "attrValue": heightInInch
+		   }, rep.selStart);
+	       } 
+	       var widthInInch = Datatables.getAttrInInch(tableEl.style.width);	
+	       var numOfLinesAbove = Datatables.getTblAboveRowsFromCurFocus(rep.selStart);
+	       var start = [];
+	       start[0] = rep.selStart[0] - numOfLinesAbove,
+	       start[1] = rep.selStart[1];
+	       if (!isNaN(widthInInch)) {
+		   while (start[0] < rep.lines.length() && rep.lines.atIndex(start[0]).text.indexOf('data-tables') != -1) { //count num of rows above current pos
+		       Datatables.updateTablePropertiesHelper({
+		           "tblWidth": true,
+		           "attrName": "width",
+		           "attrValue": widthInInch
+		       }, start);
+		       start[0] = start[0] + 1;
+		   }
+	       }
+	       /*else if(handleImageMouseUp){
+				var line = rep.lines.atIndex(rep.selStart[0]);
+				lineNode = line.lineNode;
+				spanEl = lineNode.childNodes[0];
+				imgEl = spanEl.childNodes[0];
+			
+				var heightInPercent = getAttrInInch(imgEl.style.height);
+				if(!isNaN(heightInPercent)){
+					updateImageProperties({"imgHeight":true,"attrName":"height","attrValue":heightInPercent});
+				}
+				var widthInPercent =  getAttrInInch(imgEl.style.width);
+				if(!isNaN(widthInPercent)){
+					updateImageProperties({"imgWidth":true,"attrName":"width","attrValue":widthInPercent});
+					}							
+			} 
+			if(handleTblMouseUp||handleImageMouseUp){
+				if ((!evt.ctrlKey) && (evt.button == 2)){
+					var addX = evt.pageX;
+					var addY = evt.pageY;
+					var scrollY = getScrollY();								
+					top.frames['epLite'].$.alignMenu(top.frames['epLite'].$.tblContextMenu, null,addX,addY,scrollY);
+					var focusType = (handleTblMouseUp)?"tbl":"img";
+					top.frames['epLite'].$.updateTblMenu(focusType);
+					top.frames['epLite'].$.tblContextMenu.show();			
+				}
+			} */
+	});
+   };
+
+	dt.handleTableClick = function (evt) {
+	    var context = this;
+	    Datatables.context = context;
+	    var rep = context.rep;
+  	    var editorInfo = context.editorInfo;
+            var thisAuthor = editorInfo.ace_getAuthor();
+	    var currLine = rep.lines.atIndex(rep.selStart[0]);
+	    var currLineText = currLine.text;
+	    
+	    if (currLineText.indexOf('data-tables') == -1) {
+		return false;
+	    }
+	    try {
+		var tblJSONObj = JSON.parse(currLineText);
+		var payload = tblJSONObj.payload;
+		var currTdInfo = Datatables.getFocusedTdInfo(payload, rep.selStart[1]);
+		var selRow = currTdInfo.row;
+		var selTd = currTdInfo.td;
+		var jsoTblProp = Datatables.getLineTableProperty(rep.selStart[0]);
+		var author = jsoTblProp.authors[thisAuthor] || {
+		    row: -1,
+		    cell: -1
+		};
+		var currRowAuthorIdx = author.row;
+		var currCellAuthorIdx = author.cell;
+		
+		if (!(selRow == currRowAuthorIdx && selTd == currCellAuthorIdx)) {
+		    Datatables.updateTblCellAuthor(selRow, selTd, jsoTblProp, rep.selStart);
+		}
+
+	    } catch (error) {
+		//domline.createErrorState(start,end,'handleTableClick',currLineText,rep.selStart,rep.selEnd,"",error);
+	    }
+	};
+
         dt.printCaretPos = function (start, end) {
             top.console.log(JSON.stringify(start));
             top.console.log(JSON.stringify(end));
@@ -1131,6 +1296,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
         dt.updateTablePropertiesHelper = function (props, start, currTd) {
             var rep = this.context.rep;
             lastTblPropertyUsed = 'updateTableProperties';
+	   
             start = start || rep.selStart;
             if (!(start)) return;
             var currLine = rep.lines.atIndex(start[0]);
@@ -1141,20 +1307,17 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 var tblProperties = this.getLineTableProperty(start[0]);
                 var update = false;
                 //table width , height , border width and tbl  color	
-                if (props.tblWidth || props.tblHeight || props.tblBorderWidth || props.tblBorderColor) {
+		 
+		if (props.tblWidth || props.tblHeight || props.tblBorderWidth || props.tblBorderColor) {
                     var currAttrValue = tblProperties[props.attrName];
                     if (props.attrValue != null && (typeof (currAttrValue) == 'undefined' || currAttrValue != props.attrValue)) {
                         tblProperties[props.attrName] = props.attrValue;
                         update = true;
                     }
                 }
-                /*
-
-			set or unset table cells attrs
-
+                /*	set or unset table cells attrs
 			bold , italic , line-through/underline;
-
-			*/
+		*/
                 if (props.tblCellFontWeight || props.tblCellFontStyle || props.tblCellTextDecoration) {
                     var tblProps = this.addCellAttr(start, tblJSONObj, tblProperties, props.attrName, props.attrValue);
                     if (tblProps) {
@@ -1195,6 +1358,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                     }
                 }
                 //only update if there is a change
+		//top.console.log('update ' ,update);
                 if (update) {
                     this.updateTblPropInAPool(-1, -1, tblProperties, start);
                 }
@@ -1558,6 +1722,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 return true;
             }
         };
+
         dt.isCellDeleteOk = function (keyCode) {
             var context = this.context;
             var rep = context.rep;
@@ -1653,6 +1818,42 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 return;
             }
         };
+ dt.buildTblParams = function(attributeName){
+      var selParams = {};  	
+	switch(attributeName){
+			case 'bold':
+				selParams.tblCellFontWeight=true;
+				selParams.attrName = "fontWeight";
+				selParams.attrValue = "bold";
+			break;
+			case 'italic':
+				selParams.tblCellFontStyle=true;
+				selParams.attrName = "fontStyle";
+				selParams.attrValue = "italic";
+			break;
+			case 'underline':
+				selParams.tblCellTextDecoration=true;
+				selParams.attrName = "textDecoration";
+				selParams.attrValue = "underline";
+			break;
+			case 'strikethrough':
+				selParams.tblCellTextDecoration=true;
+				selParams.attrName = "textDecoration";
+				selParams.attrValue = "line-through";
+			break;
+		  }
+	return selParams;
+};
+ dt.toggleTableAttributeOnSelection = function (attributeName) {
+     Datatables.context = Datatables.context||this; // the scope is still ep lite and not DataTables because of the binding we have to do in  exports.aceInitialized
+     var rep = Datatables.context.rep;
+     var currLine = rep.lines.atIndex(rep.selStart[0]);
+     var currLineText = currLine.text;
+     var selParams = Datatables.buildTblParams(attributeName);
+     Datatables.updateTablePropertiesHelper(selParams, rep.selStart);
+     return true;
+ };
+
         dt.doDeleteKey = function () {
             var context = this.context;
             var evt = context.evt || {};
