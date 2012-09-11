@@ -1,6 +1,6 @@
 {
   "author": {
-    "name": ["Gedion Woldeselassie","Tenzin Tsetan"],
+    "name": "Gedion Woldeselassie",
     "email": "gwy321@gmail.com"
   },
   "name": "ep_datatables",
@@ -20,10 +20,12 @@
   "optionalDependencies": {},
   "_id": "ep_datatables@0.1.0",
   "_engineSupported": true,
-  "_npmVersion": "1.1.21",
+  "_npmVersion": "1.1.24",
   "_nodeVersion": "v0.6.16",
   "_defaultsLoaded": true,
-  "_from": "ep_datatables"
+  "_from": "ep_datatables",
+  "_npmUser": {
+    "name": "gedion",
+    "email": "gwy321@gmail.com"
+  }
 }
-
-

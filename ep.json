@@ -10,14 +10,17 @@
 		},
 		"client_hooks" : {			
 			"aceInitInnerdocbodyHead": "ep_datatables/static/js/datatables:aceInitInnerdocbodyHead",
-		 	"collectContentBreak": "ep_datatables/static/js/contentcollector:collectContentBreak",
-		 	"collectContentTblTd": "ep_datatables/static/js/contentcollector:collectContentTblTd",
+		 	"collectContentLineBreak": "ep_datatables/static/js/contentcollector:collectContentLineBreak",
+		 	"collectContentLineText": "ep_datatables/static/js/contentcollector:collectContentLineText",
 			"aceKeyEvent": "ep_datatables/static/js/datatables.js:aceKeyEvent",
-			"aceLineAndCharForPoint": "ep_datatables/static/js/datatables.js:aceLineAndCharForPoint",
+			"aceStartLineAndCharForPoint": "ep_datatables/static/js/datatables.js:aceStartLineAndCharForPoint",
+			"aceEndLineAndCharForPoint": "ep_datatables/static/js/datatables.js:aceEndLineAndCharForPoint",
 			"aceAttribsToClasses": "ep_datatables/static/js/datatables.js:aceAttribsToClasses",
 			"acePostWriteDomLineHTML": "ep_datatables/static/js/datatables:acePostWriteDomLineHTML",
 			"aceInitialized": "ep_datatables/static/js/datatables:aceInitialized",
-			"postAceInit": "ep_datatables/static/js/datatables:postAceInit"						
+			"postAceInit": "ep_datatables/static/js/datatables:postAceInit",
+			"disableAuthorColorsForThisLine": "ep_datatables/static/js/linestylefilter:disableAuthorColorsForThisLine"
+				
 		}
 	}]
 }

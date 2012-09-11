@@ -1,27 +1,29 @@
-exports.collectContentBreak = function (hook, context) {
+exports.collectContentLineBreak = function (hook, context) {
     var tvalue = context.tvalue;
+    var breakLine = true;
     if (tvalue && tvalue == 'tblBreak') {
-        context.cc.breakLine = false;
+       breakLine = false;
     }
+    return breakLine;
 };
-exports.collectContentTblTd = function (hook, context) {
+exports.collectContentLineText= function (hook, context) {
     var n = context.node;
     var txt = context.text;
     if (txt) {
         while (n) {
             if (n.tagName == 'TD') {
-                var tagName = n.getAttribute("name");
-                if (tagName == 'tData') {
+                var elementName = n.getAttribute("name");
+                if (elementName == 'tData') {
                     txt = txt.replace(/\\/g, "|");
                     txt = txt.replace(/"/g, "'");
                     break;
-                } else if (tagName == 'delimCell') {
+                } else if (elementName == 'delimCell') {
                     txt = '","';
                     break;
-                } else if (tagName == 'payload') {
+                } else if (elementName == 'payload') {
                     txt = "{\"payload\":[[\"";
                     break;
-                } else if (tagName == 'bracketAndcomma') {
+                } else if (elementName == 'bracketAndcomma') {
                     txt = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\"}";
                     break;
                 }
@@ -29,5 +31,5 @@ exports.collectContentTblTd = function (hook, context) {
             n = n.parentNode;
         }
     }
-    context.cc.text = txt;
+    return txt;
 };
