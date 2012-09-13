@@ -5,7 +5,7 @@
   },
   "name": "ep_datatables",
   "description": "Adds datatables to etherpad-lite",
-  "version": "0.1.0",
+  "version": "0.1.0.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/gedion/ep_datatables.git"
@@ -18,7 +18,7 @@
   },
   "devDependencies": {},
   "optionalDependencies": {},
-  "_id": "ep_datatables@0.1.0",
+  "_id": "ep_datatables@0.1.0.1",
   "_engineSupported": true,
   "_npmVersion": "1.1.24",
   "_nodeVersion": "v0.6.16",
