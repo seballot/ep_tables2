@@ -1,6 +1,6 @@
 {
   "author": {
-    "name": "Gedion Woldeselassie",
+    "name": ["Gedion Woldeselassie","Tenzin Tsetan"],
     "email": "gwy321@gmail.com"
   },
   "name": "ep_datatables",
@@ -14,7 +14,7 @@
     "node": "*"
   },
   "dependencies": {
-    "ep_etherpad-lite": "1.0.x"
+    "ep_etherpad-lite": "1.1.x"
   },
   "devDependencies": {},
   "optionalDependencies": {},
