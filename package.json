@@ -13,9 +13,7 @@
   "engines": {
     "node": "*"
   },
-  "dependencies": {
-    "ep_etherpad-lite": "1.1.x"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "optionalDependencies": {},
   "_id": "ep_datatables@0.1.1",
