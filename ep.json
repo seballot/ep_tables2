@@ -1,7 +1,7 @@
 {
 	"parts": [
 	{
-		"name": "datatables",
+		"name": "tables",
 		"hooks" : {
 			"eejsBlock_styles": "ep_datatables/static/js/datatables:eejsBlock_styles",
 			"eejsBlock_scripts": "ep_datatables/static/js/datatables:eejsBlock_scripts",
