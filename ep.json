@@ -3,23 +3,23 @@
 	{
 		"name": "tables",
 		"hooks" : {
-			"eejsBlock_styles": "ep_datatables/static/js/datatables:eejsBlock_styles",
-			"eejsBlock_scripts": "ep_datatables/static/js/datatables:eejsBlock_scripts",
-			"eejsBlock_editbarMenuLeft": "ep_datatables/static/js/datatables:eejsBlock_editbarMenuLeft"
+			"eejsBlock_styles": "ep_tables/static/js/datatables:eejsBlock_styles",
+			"eejsBlock_scripts": "ep_tables/static/js/datatables:eejsBlock_scripts",
+			"eejsBlock_editbarMenuLeft": "ep_tables/static/js/datatables:eejsBlock_editbarMenuLeft"
 
 		},
 		"client_hooks" : {			
-			"aceInitInnerdocbodyHead": "ep_datatables/static/js/datatables:aceInitInnerdocbodyHead",
-		 	"collectContentLineBreak": "ep_datatables/static/js/contentcollector:collectContentLineBreak",
-		 	"collectContentLineText": "ep_datatables/static/js/contentcollector:collectContentLineText",
-			"aceKeyEvent": "ep_datatables/static/js/datatables.js:aceKeyEvent",
-			"aceStartLineAndCharForPoint": "ep_datatables/static/js/datatables.js:aceStartLineAndCharForPoint",
-			"aceEndLineAndCharForPoint": "ep_datatables/static/js/datatables.js:aceEndLineAndCharForPoint",
-			"aceAttribsToClasses": "ep_datatables/static/js/datatables.js:aceAttribsToClasses",
-			"acePostWriteDomLineHTML": "ep_datatables/static/js/datatables:acePostWriteDomLineHTML",
-			"aceInitialized": "ep_datatables/static/js/datatables:aceInitialized",
-			"postAceInit": "ep_datatables/static/js/datatables:postAceInit",
-			"disableAuthorColorsForThisLine": "ep_datatables/static/js/linestylefilter:disableAuthorColorsForThisLine"
+			"aceInitInnerdocbodyHead": "ep_tables/static/js/datatables:aceInitInnerdocbodyHead",
+		 	"collectContentLineBreak": "ep_tables/static/js/contentcollector:collectContentLineBreak",
+		 	"collectContentLineText": "ep_tables/static/js/contentcollector:collectContentLineText",
+			"aceKeyEvent": "ep_tables/static/js/datatables.js:aceKeyEvent",
+			"aceStartLineAndCharForPoint": "ep_tables/static/js/datatables.js:aceStartLineAndCharForPoint",
+			"aceEndLineAndCharForPoint": "ep_tables/static/js/datatables.js:aceEndLineAndCharForPoint",
+			"aceAttribsToClasses": "ep_tables/static/js/datatables.js:aceAttribsToClasses",
+			"acePostWriteDomLineHTML": "ep_tables/static/js/datatables:acePostWriteDomLineHTML",
+			"aceInitialized": "ep_tables/static/js/datatables:aceInitialized",
+			"postAceInit": "ep_tables/static/js/datatables:postAceInit",
+			"disableAuthorColorsForThisLine": "ep_tables/static/js/linestylefilter:disableAuthorColorsForThisLine"
 				
 		}
 	}]
