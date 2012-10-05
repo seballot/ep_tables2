@@ -9,7 +9,7 @@ if (typeof (require) != 'undefined') {
     }
 }
 exports.aceInitInnerdocbodyHead = function (hook_name, args, cb) {
-    args.iframeHTML.push('<link rel="stylesheet" type="text/css" href="/static/plugins/ep_datatables/static/css/dataTables.css"/>');
+    args.iframeHTML.push('<link rel="stylesheet" type="text/css" href="/static/plugins/ep_tables/static/css/dataTables.css"/>');
 }
 // Bind the event handler to the toolbar buttons
 exports.postAceInit = function (hook, context) {
@@ -648,13 +648,13 @@ exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
     }
 }
 exports.eejsBlock_scripts = function (hook_name, args, cb) {
-    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_datatables/templates/datatablesScripts.ejs");
+    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables/templates/datatablesScripts.ejs");
 }
 exports.eejsBlock_editbarMenuLeft = function (hook_name, args, cb) {
-    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_datatables/templates/datatablesEditbarButtons.ejs");
+    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables/templates/datatablesEditbarButtons.ejs");
 }
 exports.eejsBlock_styles = function (hook_name, args, cb) {
-    args.content = require('ep_etherpad-lite/node/eejs/').require("ep_datatables/templates/styles.ejs") + args.content;
+    args.content = require('ep_etherpad-lite/node/eejs/').require("ep_tables/templates/styles.ejs") + args.content;
 }
 // Our heading attribute will result in a heaading:h1... :h6 class
 exports.aceAttribsToClasses = function (hook, context) {
@@ -1626,7 +1626,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
         // Doesn't do any normalising, returns a string
         // of text as found.
         dt.toString = function () {
-            return "ep_datatables";
+            return "ep_tables";
         };
         dt.getLineAndCharForPoint = function () {
             var context = this.context;
