@@ -66,7 +66,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     if (j == 0) {
                         preHeader = "{\"payload\":[[\"";
                     }
-                    htmlTbl += "<td  name='payload' class='hide-el overhead'>" + preHeader + "</td>";
+                    htmlTbl += "<td  name='payload' class='hide-el overhead' style='display:none;'>" + preHeader + "</td>";
                     var singleRowAttr = typeof (singleRowAttrs) == 'undefined' || singleRowAttrs == null ? null : singleRowAttrs[j];
                     for (var i = 0, tl = tds.length; i < tl; i++) {
                         var cellAttr = typeof (cellAttrs[j]) == 'undefined' || cellAttrs[j] == null ? null : cellAttrs[j][i];
@@ -81,7 +81,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                         var colVAlign = typeof (colAttrs[i]) == 'undefined' || colAttrs[i] == null ? "" : "align='" + colAttrs[i].colVAlign + "'" || "";
                         var quoteAndComma = "\",\"";
                         var cellDel = "";
-                        var delimCell = "<td name='delimCell' id='" + "' class='hide-el overhead'>" + quoteAndComma + "</td>";
+                        var delimCell = "<td name='delimCell' id='" + "' class='hide-el overhead' style='display:none;'>" + quoteAndComma + "</td>";
                         var lastCellBorder = "";
                         if (i == tl - 1) {
                             delimCell = "";
@@ -93,7 +93,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                             var tdText = tds[i].split('/r/n');
                             for (var k = 0; k < tdText.length; k++) {
                                 if (k < tdText.length - 1) {
-                                    cellsWithBr += tdText[k] + "<label value='tblBreak' class='hide-el'>/r/n</label><label class='tblBreak'></label>";
+                                    cellsWithBr += tdText[k] + "<label value='tblBreak' class='hide-el' style='display:none;'>/r/n</label><label class='tblBreak' style='display:block;'></label>";
                                 } else cellsWithBr += tdText[k];
                             }
                             htmlTbl += "<td  name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + " border-left:" + 
@@ -104,7 +104,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                         }
                     }
                     var bracketAndcomma = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\"}";
-                    htmlTbl += "<td name='bracketAndcomma' class='  hide-el overhead'>" + bracketAndcomma + "</td>";
+                    htmlTbl += "<td name='bracketAndcomma' class='  hide-el overhead' style='display:none;'>" + bracketAndcomma + "</td>";
                     htmlTbl += "</tr>";
                 }
                 htmlTbl += "</tbody></table>";

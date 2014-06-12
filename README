@@ -1,0 +1,6 @@
+Initial project from Gideon (@github)
+
+
+v0.2.0
+- Fix to make it work again
+- Add https support by having yahoo library locally as online yahoos libraries have serious access problems

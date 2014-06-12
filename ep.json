@@ -9,7 +9,6 @@
 
 		},
 		"client_hooks" : {			
-			"aceInitInnerdocbodyHead": "ep_tables/static/js/datatables:aceInitInnerdocbodyHead",
 		 	"collectContentLineBreak": "ep_tables/static/js/contentcollector:collectContentLineBreak",
 		 	"collectContentLineText": "ep_tables/static/js/contentcollector:collectContentLineText",
 			"aceKeyEvent": "ep_tables/static/js/datatables.js:aceKeyEvent",

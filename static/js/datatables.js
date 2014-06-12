@@ -1,26 +1,21 @@
 var _ = require('ep_etherpad-lite/static/js/underscore');
 // CommonJS
 if (typeof (require) != 'undefined') {
-    if (typeof (Ace2Common) == 'undefined') {
-        Ace2Common = require('ep_etherpad-lite/static/js/ace2_common');
-    }
     if (typeof (Changeset) == 'undefined') {
         Changeset = require('ep_etherpad-lite/static/js/Changeset');
     }
 }
-exports.aceInitInnerdocbodyHead = function (hook_name, args, cb) {
-    args.iframeHTML.push('<link rel="stylesheet" type="text/css" href="/static/plugins/ep_tables/static/css/dataTables.css"/>');
-}
 // Bind the event handler to the toolbar buttons
 exports.postAceInit = function (hook, context) {
     $.createTableMenu = function (init) {
-        if (typeof (top.templatesMenu) != 'undefined') {
-            top.templatesMenu.hide();
-        }
         if ($.tblContextMenu) {
             $.alignMenu($.tblContextMenu, 'tbl-menu');
             $.tblContextMenu.show();
             return;
+        }
+
+        function hideTblContextMenu() {
+            $.tblContextMenu.cancel();
         }
 
         function showTblPropPanel() {
@@ -75,8 +70,8 @@ exports.postAceInit = function (hook, context) {
                     showhexsummary: false,
                     showhexcontrols: true,
                     images: {
-                        PICKER_THUMB: "http://yui.yahooapis.com/2.9.0/build/colorpicker/assets/picker_thumb.png",
-                        HUE_THUMB: "http://yui.yahooapis.com/2.9.0/build/colorpicker/assets/hue_thumb.png"
+                        PICKER_THUMB: "/static/plugins/ep_tables/static/js/yahoo_2.8.0/colorpicker/assets/picker_thumb.png",
+                        HUE_THUMB: "/static/plugins/ep_tables/static/js/yahoo_2.8.0/colorpicker/assets/hue_thumb.png"
                     }
                 });
                 $.oColorPicker.on("rgbChange", colorPickerButtonClick);
@@ -165,7 +160,7 @@ exports.postAceInit = function (hook, context) {
                 zindex: 500,
                 shadow: false,
                 position: "dynamic",
-                keepopen: true,
+                keepopen: false,
                 clicktohide: true
             });
             $.tblContextMenu.addItems([
@@ -183,6 +178,13 @@ exports.postAceInit = function (hook, context) {
                     text: "Table Properties",
                     onclick: {
                         fn: showTblPropPanel
+                    }
+                }],
+                [{
+                    id: 'tbl_prop_menu_hide',
+                    text: "Close this menu",
+                    onclick: {
+                        fn: hideTblContextMenu
                     }
                 }]
             ]);
@@ -692,16 +694,15 @@ exports.aceEndLineAndCharForPoint = function (hook, context) {
     return selEndLine;
 };
 exports.aceKeyEvent = function (hook, context) {
-
-	var specialHandled = false;
+    var specialHandled = false;
     try {
         Datatables.context = context;
         if (Datatables.isFocused()) {
             var evt = context.evt;
             var type = evt.type;
             var keyCode = evt.keyCode;
-            var isTypeForSpecialKey = ((Ace2Common.browser.msie || Ace2Common.browser.safari) ? (type == "keydown") : (type == "keypress"));
-            var isTypeForCmdKey = ((Ace2Common.browser.msie || Ace2Common.browser.safari) ? (type == "keydown") : (type == "keypress"));
+            var isTypeForSpecialKey = (($.browser.msie || $.browser.safari) ? (type == "keydown") : (type == "keypress"));
+            var isTypeForCmdKey = (($.browser.msie || $.browser.safari) ? (type == "keydown") : (type == "keypress"));
             var which = evt.which;
             if ((!specialHandled) && isTypeForSpecialKey && keyCode == 9 && !(evt.metaKey || evt.ctrlKey)) {
                 context.editorInfo.ace_fastIncorp(5);
