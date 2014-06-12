@@ -9,8 +9,14 @@ if (typeof (require) != 'undefined') {
 exports.postAceInit = function (hook, context) {
     $.createTableMenu = function (init) {
         if ($.tblContextMenu) {
-            $.alignMenu($.tblContextMenu, 'tbl-menu');
-            $.tblContextMenu.show();
+            if (!this.tblContextMenuOpened) {
+              $.alignMenu($.tblContextMenu, 'tbl-menu');
+              $.tblContextMenu.show();
+              this.tblContextMenuOpened = true;
+            } else {
+              $.tblContextMenu.hide();
+              this.tblContextMenuOpened = false;
+            }
             return;
         }
 
