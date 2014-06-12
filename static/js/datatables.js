@@ -27,8 +27,8 @@ exports.postAceInit = function (hook, context) {
         function showTblPropPanel() {
             if (!$.tblPropDialog) {
                 $.tblPropDialog = new YAHOO.widget.Dialog("yui-tbl-prop-panel", {
-                    width: "480px",
-                    height: "360px",
+                    width: "490px",
+                    height: "370px",
                     close: true,
                     visible: false,
                     zindex: 1001,
@@ -156,8 +156,7 @@ exports.postAceInit = function (hook, context) {
             }, 'tblOptions', true);
         }
         $.getTblPropertiesHTML = function () {
-            return "<span id='table_properties'><span class='tbl-prop-menu-header'></span><span id='tbl-prop-menu'class='tbl-prop-menu'>" +
-"<table class='left-tbl-props tbl-inline-block'>" +
+            return "<table class='left-tbl-props tbl-inline-block'>" +
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label' style='padding-top: 0px;'>Table border</span></td></tr>" +
 "<tr><td><span class='tbl-inline-block' id='tbl_border_color'>&nbsp;</span><span id='tbl_border_width'class='tbl-inline-block tbl_border_width'></span></td></tr>" +
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Cell background color</span></td></tr><tr><td><span id='tbl_cell_bg_color'></td></tr><tr><td></span></td></tr>" +
@@ -168,8 +167,12 @@ exports.postAceInit = function (hook, context) {
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Row/Col alignment</span></td></tr>" +
 "<tr><td><span class='tbl-inline-block' id='tbl_row_v_align'>Row align&nbsp;</span><span id='tbl_col_v_align' class='tbl-inline-block'>Col align</span></td></tr>" +
 "</table>" +
-"<span class=' tbl-inline-block'>" + "<span class='tbl-prop-label' style='padding-top: 8px;'>" + "Dimensions" + "</span>&nbsp;&nbsp;<span id='text_input_message'></span>" +
+"<span class=' tbl-inline-block'>" +
 "<table class='tbl-prop-dim'>" + "<tbody>" +
+"<tr>" +
+  "<td> " + "<span class='tbl-prop-label'>" + "Dimensions" + "</span>&nbsp;&nbsp;<span id='text_input_message'></span>" + "</td>" +
+  "<td colspan=2></td> " +
+"</tr>" +
 "<tr>" +
   "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>Table width (%)</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
@@ -231,7 +234,7 @@ exports.postAceInit = function (hook, context) {
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_decoration' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
 "</tr>" +
 "</tbody>" + "</table>" +
-"</span>" + "</span>" + "</span>";
+"</span>";
 /*"<span id='img_properties'>" + "<span class='tbl-prop-menu-header'></span><span id='img-prop-menu'class='tbl-prop-menu'>" + 
 "<table class='left-tbl-props tbl-inline-block'>" + "<caption><span class='tbl-prop-label' style='padding-top: 8px;'>" + "Dimensions" + "</span></caption>" + "<tbody>" + 
 "<tr>" + 
