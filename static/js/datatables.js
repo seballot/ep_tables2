@@ -702,8 +702,7 @@ exports.aceKeyEvent = function (hook, context) {
             var evt = context.evt;
             var type = evt.type;
             var keyCode = evt.keyCode;
-            var isTypeForSpecialKey = (($.browser.msie || $.browser.safari) ? (type == "keydown") : (type == "keypress"));
-            var isTypeForCmdKey = (($.browser.msie || $.browser.safari) ? (type == "keydown") : (type == "keypress"));
+            var isTypeForSpecialKey = (type == "keydown" || type == "keypress");
             var which = evt.which;
             if ((!specialHandled) && isTypeForSpecialKey && keyCode == 9 && !(evt.metaKey || evt.ctrlKey)) {
                 context.editorInfo.ace_fastIncorp(5);
