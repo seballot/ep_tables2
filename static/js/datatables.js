@@ -21,8 +21,8 @@ exports.postAceInit = function (hook, context) {
         function showTblPropPanel() {
             if (!$.tblPropDialog) {
                 $.tblPropDialog = new YAHOO.widget.Dialog("yui-tbl-prop-panel", {
-                    width: "600px",
-                    height: "450px",
+                    width: "480px",
+                    height: "360px",
                     close: true,
                     visible: false,
                     zindex: 1001,
@@ -150,7 +150,95 @@ exports.postAceInit = function (hook, context) {
             }, 'tblOptions', true);
         }
         $.getTblPropertiesHTML = function () {
-            return "<span id='table_properties'><span class='tbl-prop-menu-header'></span><br><span id='tbl-prop-menu'class='tbl-prop-menu'>" + "<table class='left-tbl-props tbl-inline-block'>" + "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label' style='padding-top: 8px;'>Table border</span></td></tr>" + "<tr><td><span class='tbl-inline-block' id='tbl_border_color'>&nbsp;</span><span id='tbl_border_width'class='tbl-inline-block tbl_border_width'></span></td></tr>" + "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'>Cell background color</span></td></tr><tr><td><span id='tbl_cell_bg_color'></td></tr><tr><td></span></td></tr>" + "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'>Even/Odd Row background color</span></td></tr>" + "	<tr><td><span class='tbl-inline-block' id='tbl_even_row_bg_color'>Even  &nbsp;</span><span id='tbl_odd_row_bg_color' class='tbl-inline-block'>Odd</span></td></tr>" + "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'>Single Row/Col background color</span></td></tr>" + "	<tr><td><span class='tbl-inline-block' id='tbl_single_row_bg_color'>Single Row  &nbsp;</span><span id='tbl_single_col_bg_color' class='tbl-inline-block'>Single Col</span></td></tr>" + "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'>Row/Col alignment</span></td></tr>" + "	<tr><td><span class='tbl-inline-block' id='tbl_row_v_align'>Row align&nbsp;</span><span id='tbl_col_v_align' class='tbl-inline-block'>Col align</span></td></tr>" + "</table>" + "	<span class=' tbl-inline-block'>" + "		<span class='tbl-prop-label' style='padding-top: 8px;'>" + "Dimensions(Inches) " + "		</span>&nbsp;&nbsp;<span id='text_input_message'></span>" + "		<table class='tbl-prop-dim'>" + "			<tbody>" + "				<tr>" + "					<td>							" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label  >Table width</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='tbl_width' type='text' size='4' class='text-input' >" + "						</span>" + "					</td>" + "				</tr>" + "				<tr>" + "					<td>							" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label  >Table height</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='tbl_height' type='text' size='4' class='text-input' >" + "						</span>" + "					</td>" + "				</tr>" + "				<tr>" + "					<td>							" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label  >Column width</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='tbl_col_width' type='text' size='4' class='text-input' >" + "						</span>" + "					</td>" + "				</tr>" + "				<tr>" + "					<td>	" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label  >Minimum row height</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='tbl_row_height' type='text' size='4' class='text-input' >" + "						</span>" + "					</td>" + "				</tr>" + "				<tr>" + "					<td>" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label >Cell padding</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='tbl_cell_padding' type='text' size='4' class='text-input'>" + "						</span>" + "					</td>" + "				</tr>" + "			</tbody>" + "		</table>" + "		<br> " + "		<span class='tbl-prop-label' style='padding-top: 8px;'>" + "			Fonts " + "		</span>" + "		<table class='tbl-prop-dim'>" + "				<tr>" + "					<td>" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label >Cell font size</label>" + "						</span>" + "					</td>" + "					<td class='select-font-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='tbl_cell_font_size' type='text' size='4' class='text-input'>" + "						</span>" + "					</td>" + "				</tr>" + "			</tbody>" + "		</table>" + "	</span>" + "</span>" + "</span>" + "<span id='img_properties'>" + "<span class='tbl-prop-menu-header'></span><span id='img-prop-menu'class='tbl-prop-menu'>" + "<table class='left-tbl-props tbl-inline-block'>" + "		<caption><span class='tbl-prop-label' style='padding-top: 8px;'>" + "			Dimensions(Intches) " + "		</span></caption>" + "			<tbody>" + "				<tr>" + "					<td>							" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label  >Image width</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='img_width' type='text' size='4' class='text-input' >" + "						</span>" + "					</td>" + "				</tr>" + "				<tr>" + "					<td>							" + "						<span class='tbl-prop-dim-label tbl-inline-block'>" + "							<label  >Image height</label>" + "						</span>" + "					</td>" + "					<td class='td-spacer'></td>" + "					<td>" + "						<span class=' tbl-inline-block'>" + "							<input id='img_height' type='text' size='4' class='text-input' >" + "						</span>" + "					</td>" + "				</tr>" + "</table>" + "</span>" + "</span>";
+            return "<span id='table_properties'><span class='tbl-prop-menu-header'></span><span id='tbl-prop-menu'class='tbl-prop-menu'>" +
+"<table class='left-tbl-props tbl-inline-block'>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label' style='padding-top: 0px;'>Table border</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_border_color'>&nbsp;</span><span id='tbl_border_width'class='tbl-inline-block tbl_border_width'></span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Cell background color</span></td></tr><tr><td><span id='tbl_cell_bg_color'></td></tr><tr><td></span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Even/Odd Row background color</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_even_row_bg_color'>Even  &nbsp;</span><span id='tbl_odd_row_bg_color' class='tbl-inline-block'>Odd</span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Single Row/Col background color</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_single_row_bg_color'>Single Row &nbsp;</span><span id='tbl_single_col_bg_color' class='tbl-inline-block'>Single Col</span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Row/Col alignment</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_row_v_align'>Row align&nbsp;</span><span id='tbl_col_v_align' class='tbl-inline-block'>Col align</span></td></tr>" +
+"</table>" +
+"<span class=' tbl-inline-block'>" + "<span class='tbl-prop-label' style='padding-top: 8px;'>" + "Dimensions" + "</span>&nbsp;&nbsp;<span id='text_input_message'></span>" +
+"<table class='tbl-prop-dim'>" + "<tbody>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>Table width (%)</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_width' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Table height (px)</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_height' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Column width (px)</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_col_width' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td> " + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Row height (px)</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_row_height' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td> " + "<span class='tbl-prop-label'>" + "<br />Cell Styles " + "</span>" + "</td>" +
+  "<td colspan=2></td> " +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Font</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<select id='tbl_cell_font' class='text-input' style='width:70px;'>" +
+        "<option value='dummy' selected=''>Font</option>" +
+        "<option value='Arial'>Arial</option>" +
+        "<option value='Times New Roman'>Times New Roman</option>" +
+        "<option value='Calibri'>Calibri</option>" +
+        "<option value='Helvetica'>Helvetica</option>" +
+        "<option value='Courier'>Courier</option>" +
+        "<option value='Palatino'>Palatino</option>" +
+        "<option value='Garamond'>Garamond</option>" +
+        "<option value='Bookman'>Bookman</option>" +
+        "<option value='Avant Guard'>Avant Guard</option></select></span>" +
+  "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Font Size (px)</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_font_size' type='text' size='4' class='text-input'>" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Bold </label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_bold' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Italic</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_italic' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
+"</tr>" +
+"<tr>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Underline</label>" + "</span>" + "</td>" +
+  "<td class='td-spacer'></td>" +
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_decoration' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
+"</tr>" +
+"</tbody>" + "</table>" +
+"</span>" + "</span>" + "</span>";
+/*"<span id='img_properties'>" + "<span class='tbl-prop-menu-header'></span><span id='img-prop-menu'class='tbl-prop-menu'>" + 
+"<table class='left-tbl-props tbl-inline-block'>" + "<caption><span class='tbl-prop-label' style='padding-top: 8px;'>" + "Dimensions" + "</span></caption>" + "<tbody>" + 
+"<tr>" + 
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Image width</label>" + "</span>" + "</td>" + 
+  "<td class='td-spacer'></td>" + 
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='img_width' type='text' size='4' class='text-input' >" + "</span>" + "</td>" + 
+"</tr>" + 
+"<tr>" + 
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Image height</label>" + "</span>" + "</td>" + 
+  "<td class='td-spacer'></td>" + 
+  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='img_height' type='text' size='4' class='text-input' >" + "</span>" + "</td>" + 
+"</tr>" + 
+"</table>" + "</span>" + "</span>";*/
         }
         //initilizer
         if (typeof ($.tblContextMenu) == 'undefined') {
@@ -581,6 +669,7 @@ exports.postAceInit = function (hook, context) {
                     var selParams = {
                         tblPropertyChange: true
                     };
+                    selParams.attrValue = this.value;
                     if (this.id == "tbl_width") {
                         selParams.tblWidth = true;
                         selParams.attrName = "width";
@@ -596,9 +685,25 @@ exports.postAceInit = function (hook, context) {
                     } else if (this.id == "tbl_cell_padding") {
                         selParams.tblCellPadding = true;
                         selParams.attrName = "padding";
+                    } else if (this.id == "tbl_cell_font") {
+                        selParams.tblCellFont = true;
+                        selParams.attrName = "fontFamily";
+                        selParams.attrValue = this.value=="dummy"?"":this.value;
                     } else if (this.id == "tbl_cell_font_size") {
                         selParams.tblCellFontSize = true;
                         selParams.attrName = "fontSize";
+                    } else if (this.id == "tbl_cell_bold") {
+                        selParams.tblCellBold = true;
+                        selParams.attrName = "fontWeight";
+                        selParams.attrValue = this.checked?"bold":"";
+                    } else if (this.id == "tbl_cell_italic") {
+                        selParams.tblCellItalic = true;
+                        selParams.attrName = "fontStyle";
+                        selParams.attrValue = this.checked?"italic":"";
+                    } else if (this.id == "tbl_cell_decoration") {
+                        selParams.tblCellDecoration = true;
+                        selParams.attrName = "textDecoration";
+                        selParams.attrValue = this.checked?"underline":"";
                     } //image attrs
                     else if (this.id == "img_width") {
                         selParams.imgWidth = true;
@@ -607,7 +712,6 @@ exports.postAceInit = function (hook, context) {
                         selParams.imgHeight = true;
                         selParams.attrName = "height";
                     }
-                    selParams.attrValue = this.value;
                     this.value = '';
                     $('#text_input_message').text("Ok");
                     $('#text_input_message').removeAttr('style');
@@ -626,7 +730,7 @@ exports.postAceInit = function (hook, context) {
     $('#tbl-menu').click($.createTableMenu);
     YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
     $("body").append($('<div id="yui-picker-panel" class="yui-picker-panel">' + '<div class="hd">Please choose a color:</div>' + '<div class="bd">' + '	<div class="yui-picker" id="color-picker-menu"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
-    $("body").append($('<div id="yui-tbl-prop-panel" class="yui-picker-panel">' + '<div class="hd">Table/Image Properties</div>' + '<div class="bd">' + '	<div class="yui-picker" id="tbl-props"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
+    $("body").append($('<div id="yui-tbl-prop-panel" class="yui-picker-panel">' + '<div class="hd">Table Properties</div>' + '<div class="bd">' + '	<div class="yui-picker" id="tbl-props"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
     $.createTableMenu(true);
 };
 // Once ace is initialized, we set ace_doDatatableOptions and bind it to the context
@@ -760,7 +864,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 tblProps: {
                     borderWidth: "1",
                     cellAttrs: [],
-                    width: "6",
+                    width: "100",
                     rowAttrs: {},
                     colAttrs: [],
                     authors: {}
@@ -1203,8 +1307,8 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                         update = true;
                     }
                 }
-                //cell background color, height, and padding, cell font size		
-                if (props.tblCellFontSize || props.tblCellBgColor || props.tblCellHeight || props.tblCellPadding || props.tblcellVAlign) {
+                //cell background color, height, and padding, cell font size, cell bold, celle italic
+                if (props.tblCellFont || props.tblCellFontSize || props.tblCellBgColor || props.tblCellHeight || props.tblCellPadding || props.tblcellVAlign || props.tblCellBold || props.tblCellItalic || props.tblCellDecoration) {
                     var tblProps = this.addCellAttr(start, tblJSONObj, tblProperties, props.attrName, props.attrValue);
                     if (tblProps) {
                         tblProperties = tblProps;
@@ -1289,7 +1393,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
             var defTblProp = {
                 borderWidth: "1",
                 cellAttrs: [],
-                width: "6",
+                width: "100",
                 rowAttrs: {},
                 colAttrs: [],
                 authors: {}

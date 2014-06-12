@@ -57,11 +57,11 @@ width:66px !important;
     white-space: nowrap;
     width: 1em;
 }
-.tbl-prop-menu, .img-prop-dim {
+.img-prop-dim {
     padding-left: 20px;
 }
 .tbl-prop-label-td {
-    height: 33px;
+    height: 13px;
 }
 .tbl-prop-menu-header {
     color: black;
@@ -73,7 +73,7 @@ width:66px !important;
     padding-left: 170px;
 }
 .left-tbl-props {
-    padding-right: 60px;
+    padding-right: 30px;
     vertical-align: top;
 }
 .tbl-inline-block {
@@ -106,10 +106,7 @@ width:66px !important;
     padding: 1px 8px;
 }
 .td-spacer {
-    width: 30px;
-}
-.select-font-spacer {
-    width: 70px;
+    width: 15px;
 }
 .last_oh_cell {
 }

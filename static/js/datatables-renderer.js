@@ -15,7 +15,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 return {
                     borderWidth: "1",
                     cellAttrs: [],
-                    width: "6",
+                    width: "100",
                     rowAttrs: {},
                     colAttrs: [],
                     authors: {}
@@ -39,10 +39,8 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var singleRowAttrs = rowAttrs.singleRowAttrs;
                 var cellAttrs = tblProperties.cellAttrs;
                 var colAttrs = tblProperties.colAttrs;
-                var tblWidth = typeof (tblProperties) == 'undefined' || tblProperties == null ? "1" : tblProperties.width || "1";
-                tblWidth = this.getAttrInInch(tblWidth);
-                var tblHeight = typeof (tblProperties) == 'undefined' || tblProperties == null ? ".1" : tblProperties.height || ".1";
-                tblHeight = this.getAttrInInch(tblHeight);
+                var tblWidth = typeof (tblProperties) == 'undefined' || tblProperties == null ? "100" : tblProperties.width || "100";
+                var tblHeight = typeof (tblProperties) == 'undefined' || tblProperties == null ? "15" : tblProperties.height || "15";
                 var tblBorderWidth = typeof (tblProperties) == 'undefined' || tblProperties == null ? 0 : tblProperties.borderWidth || 0;
                 var tblBorderColor = typeof (tblProperties) == 'undefined' || tblProperties == null ? "#000000" : tblProperties.borderColor || "#000000";
                 var currRow = tblProperties.currRowAuthorIdx;
@@ -130,8 +128,8 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
             },
             getCellAttrs: function (singleRowAttr, cellAttr, colAttr, authors, cell, row) {
                 var attrsJSO = {};
-                var colWidth = typeof (colAttr) == 'undefined' || colAttr == null ? "1" : colAttr.width || "1";
-                attrsJSO['width'] = this.getAttrInInch(colWidth) + 'px';
+                var colWidth = typeof (colAttr) == 'undefined' || colAttr == null ? "" : colAttr.width || "";
+                attrsJSO['width'] = colWidth + 'px';
                 var cellBgColor = "";
                 //row highlight
                 if (typeof (singleRowAttr) != 'undefined' && singleRowAttr != null) {
@@ -150,30 +148,26 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 cellBgColor = typeof (cellAttr) == 'undefined' || cellAttr == null ? cellBgColor : cellAttr.bgColor || cellBgColor;
                 attrsJSO['background-color'] = cellBgColor;
                 var cellHeight = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.height || "";
-                attrsJSO['height'] = this.getAttrInInch(cellHeight) + 'px';
+                attrsJSO['height'] = cellHeight + 'px';
                 var cellPadding = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.padding || "";
-                attrsJSO['padding-top'] = attrsJSO['padding-bottom'] = attrsJSO['padding-left'] = attrsJSO['padding-right'] = this.getAttrInInch(cellPadding) + 'px';
+                attrsJSO['padding-top'] = attrsJSO['padding-bottom'] = attrsJSO['padding-left'] = attrsJSO['padding-right'] = cellPadding + 'px';
                 var cellVAlign = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.vAlign || "";
                 attrsJSO['vertical-align'] = cellVAlign;
+                var cellFont = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.fontFamily || "";
+                attrsJSO['font-family'] = cellFont;
                 var cellFontSize = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.fontSize || "";
                 attrsJSO['font-size'] = cellFontSize + 'px';
-                var cellFontWeight = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.fontWeight || "";
+                var cellFontWeight = typeof (cellAttr) == 'undefined' || cellAttr == null || typeof (cellAttr.fontWeight) == 'undefined'? "" : cellAttr.fontWeight || "";
                 attrsJSO['font-weight'] = cellFontWeight;
-                var cellFontStyle = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.fontStyle || "";
+                var cellFontStyle = typeof (cellAttr) == 'undefined' || cellAttr == null || typeof (cellAttr.fontStyle) == 'undefined'? "" : cellAttr.fontStyle || "";
                 attrsJSO['font-style'] = cellFontStyle;
-                var cellTextDecoration = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.textDecoration || "";
+                var cellTextDecoration = typeof (cellAttr) == 'undefined' || cellAttr == null || typeof (cellAttr.textDecoration) == 'undefined'? "" : cellAttr.textDecoration || "";
                 attrsJSO['text-decoration'] = cellTextDecoration;
                 var attrsString = "";
                 for (var attrName in attrsJSO) {
                     if (attrName && attrsJSO[attrName] != "" && attrsJSO[attrName] != "NaNpx" && attrsJSO[attrName] != "px") attrsString += attrName + ":" + attrsJSO[attrName] + " !important;";
                 }
                 return attrsString;
-            },
-            getAttrInInch: function (attrValue) {
-                var intAttrValue = 0;
-                intAttrValue = parseFloat(attrValue);
-                attrValue = isNaN(intAttrValue) ? parseFloat(attrValue) : intAttrValue;
-                return 96 * attrValue - 1;
             },
             getHtml: function (code, attributes) {
                 var JSONCode = "";
