@@ -219,6 +219,7 @@ exports.postAceInit = function (hook, context) {
                 context.ace.callWithAce(function (ace) {
                     ace.ace_doDatatableOptions('addTbl', 'addTblX' + $("#select_matrix").text());
                 }, 'tblOptions', true);
+                $.tblContextMenu.hide();
                 return false;
             });
             $.tblContextMenu.subscribe("click", function (p_sType, p_aArgs) {
@@ -935,7 +936,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
             if (tableObj == null) {
                 var authors = {};
                 this.insertTblRowBelow(3);
-                this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties());
+                this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties(null, true));
                 this.insertTblRowBelow(3);
                 this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties(authors));
                 this.insertTblRowBelow(3);
@@ -956,7 +957,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 for (var i = 0; i < rows; i++) {
                     this.insertTblRowBelow(cols);
                     if (i == 0) {
-                        this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties());
+                        this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties(null, true));
                     } else {
                         this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties(authors));
                     }
@@ -982,12 +983,20 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 start[0] = rep.selStart[0], start[1] = rep.selStart[1];
                 end[0] = rep.selStart[0], end[1] = rep.selStart[1];
                 if (aboveOrBelow == 'addA') {
+                    // If we add a row above the first row, the new row must have the prop 'isFirstRow' and we must remove 'isFirstRow' from current row
+                    var isFirstRow = false;
+                    var jsoTblProp = this.getLineTableProperty(start[0]);
+                    if (isFirstRow = jsoTblProp.isFirstRow) {
+                      delete jsoTblProp['isFirstRow'];
+                      this.updateTblPropInAPool(-1, -1, jsoTblProp, start);
+                    }
                     rep.selStart[0] = rep.selEnd[0] = rep.selStart[0] - 1;
                     this.insertTblRowBelow(payload[0].length);
+                    this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties(null, isFirstRow));
                 } else { //below curr row ( aboveOrBelow = 'addB')
                     this.insertTblRowBelow(payload[0].length);
+                    this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties());
                 }
-                this.context.editorInfo.ace_performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties());
                 this.updateAuthorAndCaretPos(rep.selStart[0]);
                 var updateEvenOddBgColor = true;
                 this.sanitizeTblProperties(rep.selStart, updateEvenOddBgColor);
@@ -1028,6 +1037,11 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
             var func = 'deleteTblRow()';
             var rep = this.context.rep;
             try {
+                // Check if the deleted row is the first row of the table
+                var isFirstRow = false;
+                var jsoTblProp = this.getLineTableProperty(rep.selStart[0]);
+                if (jsoTblProp.isFirstRow) isFirstRow = true;
+
                 var currLineText = rep.lines.atIndex(rep.selStart[0]).text;
                 if (currLineText.indexOf('data-tables') == -1) return;
                 rep.selEnd[0] = rep.selStart[0] + 1;
@@ -1039,6 +1053,13 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 this.updateAuthorAndCaretPos(rep.selStart[0], 0, 0);
                 updateEvenOddBgColor = true;
                 this.sanitizeTblProperties(rep.selStart, updateEvenOddBgColor);
+
+                // If the deleted row was the first row, the new first row becomes the first row and must have the prop 'isFirstRow'
+                if (isFirstRow) {
+                  var newJsoTblProp = this.getLineTableProperty(rep.selStart[0]);
+                  newJsoTblProp['isFirstRow'] = true;
+                  this.updateTblPropInAPool(-1, -1, newJsoTblProp, rep.selStart);
+                }
             } catch (error) {
                 //domline.createErrorState(start,end,'deleteTblRow',rep.lines.atIndex(rep.selStart[0]).text,rep.selStart,rep.selEnd,"",error);		
             }
@@ -1264,7 +1285,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
             this.context.editorInfo.ace_doReturnKey();
             this.context.editorInfo.ace_performDocumentReplaceRange(rep.selStart, rep.selEnd, JSON.stringify(tableObj));
         };
-        dt.createDefaultTblProperties = function (authors) {
+        dt.createDefaultTblProperties = function (authors, isFirstRow) {
             var rep = this.context.rep;
             var defTblProp = {
                 borderWidth: "1",
@@ -1277,6 +1298,9 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
             if (authors) {
                 defTblProp['authors'] = authors;
             }
+            if (isFirstRow) {
+                defTblProp['isFirstRow'] = isFirstRow;
+            }
             //from existing Table tableborder,tbl_border_width,table_width and table_height		
             var prevLine = rep.lines.atIndex(rep.selEnd[0] - 1);
             var jsoTblProp = null;
@@ -1287,7 +1311,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 }
             }
             if (!jsoTblProp) {
-                var nextLine = rep.lines.atIndex(rep.selEnd[0] - 1);
+                var nextLine = rep.lines.atIndex(rep.selEnd[0] +1);
                 if (nextLine) {
                     var nextLineText = nextLine.text;
                     if (nextLineText.indexOf("data-tables") != -1) {

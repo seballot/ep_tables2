@@ -34,6 +34,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 } catch (error) {
                     tblProperties = this.createDefaultTblProperties();
                 }
+                var isFirstRow = typeof (tblProperties) == 'undefined' || tblProperties == null || typeof (tblProperties.isFirstRow) == 'undefined'? false : tblProperties.isFirstRow;
                 var rowAttrs = tblProperties.rowAttrs;
                 var singleRowAttrs = rowAttrs.singleRowAttrs;
                 var cellAttrs = tblProperties.cellAttrs;
@@ -49,8 +50,9 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var authors = tblProperties.authors;
                 var printViewTBlStyles = "table-layout:fixed !important;border-collapse:collapse!important;font-family:Trebuchet MS!important;";
                 var printViewTblTDStyles = "font-size: 1em!important;line-height: 1em!important;padding: 3px 7px 2px!important;word-wrap: break-word!important;"
-                var htmlTbl = "<table class='" + tblClass + "' style='" + printViewTBlStyles + "background-color:white;width:" + tblWidth + "px!important;height:" + tblHeight + "px!important; border-top: " + tblBorderWidth + "px solid " + tblBorderColor + "!important;" + "'><tbody>";
-                var borders = "border-bottom:" + tblBorderWidth + "px solid " + tblBorderColor;
+                var htmlTbl = "<table class='" + tblClass + "' style='" + printViewTBlStyles + "background-color:white;width:" + tblWidth + "%!important;height:" + tblHeight + "px!important;'><tbody>";
+                var bordersBottom = "border-bottom:" + tblBorderWidth + "px solid " + tblBorderColor;
+                var bordersTop = "border-top:" + tblBorderWidth + "px solid " + tblBorderColor;
                 var rowVAlign = typeof (rowAttrs) == 'undefined' || rowAttrs == null ? "left" : rowAttrs.rowVAlign || "left";
                 var rows = tblJSONObj.payload;
                 var evenRowBgColor = typeof (rowAttrs) == 'undefined' || rowAttrs == null ? "#FFFFFF" : rowAttrs.evenBgColor || "#FFFFFF";
@@ -61,7 +63,9 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     if (!rowBgColor) {
                         rowBgColor = evenRowBgColor;
                     }
-                    htmlTbl += "<tr style='vertical-align:" + rowVAlign + ";background-color:" + rowBgColor + "; " + borders + "!important;' class='" + trClass + "'>";
+                    htmlTbl += "<tr style='vertical-align:" + rowVAlign + ";background-color:" + rowBgColor + "; " + bordersBottom + "!important;";
+                    if (isFirstRow) htmlTbl += " " + bordersTop + "!important;";
+                    htmlTbl += "' class='" + trClass + "'>";
                     var preHeader = "";
                     if (j == 0) {
                         preHeader = "{\"payload\":[[\"";
