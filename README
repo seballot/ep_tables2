@@ -1,6 +1,22 @@
 Initial project from Gideon (@github)
 
+But unfortunately, it's dead and broken..
+I decided to make it works again and improve certain things.
+
+There are still 2 important things to do, but for the time beoing, I don't have a clue how to do it:
+* Ask the timeslider to call the render function in order to have the tables there
+* Ask the export to call my plugin to create tables in exported files
+
+If you have any idea how to achieve this, please contact me.
 
 v0.2.0
 - Fix to make it work again
 - Add https support by having yahoo library locally as online yahoos libraries have serious access problems
+- Borders have all the same size
+- Fix timeslider Bug (thanks to DanBeard - https://github.com/DanBeard)
+- Added Bold, Italic, Underline & Font familiy styles & Removed Padding (not working correctly)
+- Dimension in + for the table & px for the others
+- Initial Width set to 100%
+- Second click on menu close the menu
+- Menu is closed after clicking on the matrix to create a table
+- Fix 'Enter' key that broke the row
