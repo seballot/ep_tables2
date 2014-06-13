@@ -34,6 +34,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 } catch (error) {
                     tblProperties = this.createDefaultTblProperties();
                 }
+console.log(tblProperties);
                 var isFirstRow = typeof (tblProperties) == 'undefined' || tblProperties == null || typeof (tblProperties.isFirstRow) == 'undefined'? false : tblProperties.isFirstRow;
                 var rowAttrs = tblProperties.rowAttrs;
                 var singleRowAttrs = rowAttrs.singleRowAttrs;
@@ -74,7 +75,6 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                         var cellAttr = typeof (cellAttrs[j]) == 'undefined' || cellAttrs[j] == null ? null : cellAttrs[j][i];
                         var cellStyles = this.getCellAttrs(singleRowAttr, cellAttr, colAttrs[i], authors, i, j);
                         
-                        var authorBorderColor = this.getCellAuthorColors(authors, i, j, tblBorderWidth) + "!important;";
                         var borderTop = "";
                         if (tblBorderWidth == 0) {
                             borderTop = " border-top: 0px solid white !important;";
@@ -99,10 +99,10 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                                 } else cellsWithBr += tdText[k];
                             }
                             htmlTbl += "<td  name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + " border-left:" + 
-                            tblBorderWidth + "px solid " + tblBorderColor + authorBorderColor + borderTop + lastCellBorder + "' >" + cellsWithBr + 
+                            tblBorderWidth + "px solid " + tblBorderColor + borderTop + lastCellBorder + "' >" + cellsWithBr + 
                             "<br value='tblBreak'></td>" + delimCell;
                         } else {
-                            htmlTbl += "<td name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + lastCellBorder + " border-left:" + tblBorderWidth + "px solid " + tblBorderColor + authorBorderColor + borderTop + "' >" + tds[i] + "" + "<br value='tblBreak'></td>" + delimCell
+                            htmlTbl += "<td name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + lastCellBorder + " border-left:" + tblBorderWidth + "px solid " + tblBorderColor + borderTop + "' >" + tds[i] + "" + "<br value='tblBreak'></td>" + delimCell
                         }
                     }
                     var bracketAndcomma = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\"}";
@@ -111,20 +111,6 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 }
                 htmlTbl += "</tbody></table>";
                 return htmlTbl;
-            },
-            getCellAuthorColors: function (authors, cell, row, tblBorderWidth) {
-                var cellBorderColor = null;
-                if (typeof (authors) != 'undefined' && authors != null) {
-                    for (var authorId in authors) {
-                        author = authors[authorId];
-                        if (typeof (author) != 'undefined' && author != null && author.cell == cell && author.row == row) {
-                            cellBorderColor = author.colorId;
-                        }
-                    }
-                }
-                var borderWidth = tblBorderWidth != 0 ? tblBorderWidth : 1;           
-                cellBorderColor = cellBorderColor == null ? "" : ";border:" + borderWidth + "px solid " + cellBorderColor;
-                return cellBorderColor;
             },
             getCellAttrs: function (singleRowAttr, cellAttr, colAttr, authors, cell, row) {
                 var attrsJSO = {};
