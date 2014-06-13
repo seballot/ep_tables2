@@ -1,14 +1,11 @@
 {
-  "author": {
-    "name": ["quenenni", "Gedion Woldeselassie","Tenzin Tsetan"],
-    "email": "quenenni@github"
-  },
-  "name": "ep_tables",
+  "author": "quenenni,Gedion Woldeselassie,Tenzin Tsetan <quenenni@github>",
+  "name": "ep_tables22",
   "description": "Adds tables to etherpad-lite",
   "version": "0.2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/queneni/ep_tables.git"
+    "url": "git://github.com/queneni/ep_tables2.git"
   },
   "engines": {
     "node": "*"
@@ -16,14 +13,26 @@
   "dependencies": {},
   "devDependencies": {},
   "optionalDependencies": {},
-  "_id": "ep_tables@0.2.0",
   "_engineSupported": true,
   "_npmVersion": "1.1.62",
   "_nodeVersion": "v0.10.26",
   "_defaultsLoaded": true,
-  "_from": "ep_tables",
+  "_from": "ep_tables2",
   "_npmUser": {
     "name": "quenenni",
     "email": "quenenni@github"
-  }
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "etherpad-lite",
+    "tables"
+  ],
+  "license": " Apache License V2",
+  "bugs": {
+    "url": "https://github.com/queneni/ep_tables2/issues"
+  },
+  "homepage": "https://github.com/queneni/ep_tables2"
 }

@@ -34,7 +34,6 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 } catch (error) {
                     tblProperties = this.createDefaultTblProperties();
                 }
-console.log(tblProperties);
                 var isFirstRow = typeof (tblProperties) == 'undefined' || tblProperties == null || typeof (tblProperties.isFirstRow) == 'undefined'? false : tblProperties.isFirstRow;
                 var rowAttrs = tblProperties.rowAttrs;
                 var singleRowAttrs = rowAttrs.singleRowAttrs;

@@ -76,8 +76,8 @@ exports.postAceInit = function (hook, context) {
                     showhexsummary: false,
                     showhexcontrols: true,
                     images: {
-                        PICKER_THUMB: "/static/plugins/ep_tables/static/js/yahoo_2.8.0/colorpicker/assets/picker_thumb.png",
-                        HUE_THUMB: "/static/plugins/ep_tables/static/js/yahoo_2.8.0/colorpicker/assets/hue_thumb.png"
+                        PICKER_THUMB: "/static/plugins/ep_tables2/static/js/yahoo_2.8.0/colorpicker/assets/picker_thumb.png",
+                        HUE_THUMB: "/static/plugins/ep_tables2/static/js/yahoo_2.8.0/colorpicker/assets/hue_thumb.png"
                     }
                 });
                 $.oColorPicker.on("rgbChange", colorPickerButtonClick);
@@ -769,13 +769,13 @@ exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
     }
 }
 exports.eejsBlock_scripts = function (hook_name, args, cb) {
-    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables/templates/datatablesScripts.ejs");
+    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesScripts.ejs");
 }
 exports.eejsBlock_editbarMenuLeft = function (hook_name, args, cb) {
-    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables/templates/datatablesEditbarButtons.ejs");
+    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesEditbarButtons.ejs");
 }
 exports.eejsBlock_styles = function (hook_name, args, cb) {
-    args.content = require('ep_etherpad-lite/node/eejs/').require("ep_tables/templates/styles.ejs") + args.content;
+    args.content = require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/styles.ejs") + args.content;
 }
 // Our heading attribute will result in a heaading:h1... :h6 class
 exports.aceAttribsToClasses = function (hook, context) {
@@ -1768,7 +1768,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
         // Doesn't do any normalising, returns a string
         // of text as found.
         dt.toString = function () {
-            return "ep_tables";
+            return "ep_tables2";
         };
         dt.getLineAndCharForPoint = function () {
             var context = this.context;
