@@ -15,7 +15,7 @@ v0.2.0
 - Borders have all the same size
 - Fix timeslider Bug (thanks to DanBeard - https://github.com/DanBeard)
 - Added Bold, Italic, Underline & Font familiy styles & Removed Padding (not working correctly)
-- Dimension in + for the table & px for the others
+- Dimension in % for the table & px for the others
 - Initial Width set to 100%
 - Second click on menu close the menu
 - Menu is closed after clicking on the matrix to create a table
