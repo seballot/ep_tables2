@@ -27,7 +27,7 @@ exports.postAceInit = function (hook, context) {
         function showTblPropPanel() {
             if (!$.tblPropDialog) {
                 $.tblPropDialog = new YAHOO.widget.Dialog("yui-tbl-prop-panel", {
-                    width: "490px",
+                    width: "520px",
                     height: "370px",
                     close: true,
                     visible: false,
@@ -42,6 +42,28 @@ exports.postAceInit = function (hook, context) {
             $.tblPropDialog.show();
         }
 
+        function hexToRgb(hex) {
+            // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function hidePropsDialogs() {
+            if (typeof ($.borderWidthsMenu) != 'undefined') $.borderWidthsMenu.hide();
+            if (typeof ($.oColorPickerDialog) != 'undefined') $.oColorPickerDialog.hide();
+            if (typeof ($.rowVAlignsMenu) != 'undefined') $.rowVAlignsMenu.hide();
+            if (typeof ($.colVAlignsMenu) != 'undefined') $.colVAlignsMenu.hide();
+        };
+
         function createColorPicker() {
             handleColorPickerSubmit = function () {
                 colorPickerButtonClick($.oColorPicker.get('hex'));
@@ -49,16 +71,20 @@ exports.postAceInit = function (hook, context) {
             handleDialogCancel = function () {
                 this.cancel();
             }
+            handleDialogRemoveColor = function () {
+                colorPickerButtonClick(null);
+            }
             $.oColorPickerDialog = new YAHOO.widget.Dialog("yui-picker-panel", {
-                width: "500px",
-                close: true,
+                width: "340px",
+                height: "275px",
+                close: false,
                 visible: false,
                 zindex: 1002,
                 constraintoviewport: true,
-                buttons: [{
-                    text: "Exit",
-                    handler: this.handleDialogCancel
-                }]
+                buttons: [
+//                  { text: html10n.get("ep_tables2.propBtnRemove"), handler:this.handleDialogRemoveColor },
+                  { text: html10n.get("ep_tables2.propBtnValidate"), handler: this.handleDialogCancel, isDefault:true }
+                ]
             });
             $.oColorPickerDialog.renderEvent.subscribe(function () {
                 if (!$.oColorPicker) { //make sure that we haven't already created our Color Picker					
@@ -101,42 +127,36 @@ exports.postAceInit = function (hook, context) {
                 selParams.attrName = "borderColor";
                 $.borderColorPickerButton.set("value", sColor);
                 $("#current-color").css("backgroundColor", sColor);
-                $("#current-color").innerHTML = "Current color is " + sColor;
                 break;
             case 'tbl_cell_bg_color':
                 selParams.tblCellBgColor = true;
                 selParams.attrName = "bgColor";
                 $.cellBgColorPickerButton.set("value", sColor);
                 $("#current-cell-bg-color").css("backgroundColor", sColor);
-                $("#current-cell-bg-color").innerHTML = "Current color is " + sColor;
                 break;
             case "tbl_even_row_bg_color":
                 selParams.tblEvenRowBgColor = true;
                 selParams.attrName = "evenBgColor";
                 $.evenRowBgColorPickerButton.set("value", sColor);
                 $("#even-row-bg-color").css("backgroundColor", sColor);
-                $("#even-row-bg-color").innerHTML = "Current color is " + sColor;
                 break;
             case "tbl_odd_row_bg_color":
                 selParams.tblOddRowBgColor = true;
                 selParams.attrName = "oddBgColor";
                 $.oddRowBgColorPickerButton.set("value", sColor);
                 $("#odd-row-bg-color").css("backgroundColor", sColor);
-                $("#odd-row-bg-color").innerHTML = "Current color is " + sColor;
                 break;
             case "tbl_single_row_bg_color":
                 selParams.tblSingleRowBgColor = true;
                 selParams.attrName = "bgColor";
                 $.singleRowBgColorPickerButton.set("value", sColor);
                 $("#single-row-bg-color").css("backgroundColor", sColor);
-                $("#single-row-bg-color").innerHTML = "Current color is " + sColor;
                 break;
             case "tbl_single_col_bg_color":
                 selParams.tblSingleColBgColor = true;
                 selParams.attrName = "bgColor";
                 $.singleColBgColorPickerButton.set("value", sColor);
                 $("#single-col-bg-color").css("backgroundColor", sColor);
-                $("#single-col-bg-color").innerHTML = "Current color is " + sColor;
                 break;
             }
             selParams.attrValue = sColor;
@@ -157,51 +177,52 @@ exports.postAceInit = function (hook, context) {
         }
         $.getTblPropertiesHTML = function () {
             return "<table class='left-tbl-props tbl-inline-block'>" +
-"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label' style='padding-top: 0px;'>Table border</span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label' style='padding-top: 0px;'>" + html10n.get("ep_tables2.propTableBorder") + "</span></td></tr>" +
 "<tr><td><span class='tbl-inline-block' id='tbl_border_color'>&nbsp;</span><span id='tbl_border_width'class='tbl-inline-block tbl_border_width'></span></td></tr>" +
-"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Cell background color</span></td></tr><tr><td><span id='tbl_cell_bg_color'></td></tr><tr><td></span></td></tr>" +
-"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Even/Odd Row background color</span></td></tr>" +
-"<tr><td><span class='tbl-inline-block' id='tbl_even_row_bg_color'>Even  &nbsp;</span><span id='tbl_odd_row_bg_color' class='tbl-inline-block'>Odd</span></td></tr>" +
-"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Single Row/Col background color</span></td></tr>" +
-"<tr><td><span class='tbl-inline-block' id='tbl_single_row_bg_color'>Single Row &nbsp;</span><span id='tbl_single_col_bg_color' class='tbl-inline-block'>Single Col</span></td></tr>" +
-"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />Row/Col alignment</span></td></tr>" +
-"<tr><td><span class='tbl-inline-block' id='tbl_row_v_align'>Row align&nbsp;</span><span id='tbl_col_v_align' class='tbl-inline-block'>Col align</span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propCellBackgroundColor") + "</span></td></tr>" + 
+"<tr><td><span id='tbl_cell_bg_color'></td></tr><tr><td></span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propEvenOddRowBackgroundColor") + "</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_even_row_bg_color'>" + html10n.get("ep_tables2.propEven") + "&nbsp;</span><span id='tbl_odd_row_bg_color' class='tbl-inline-block'>" + html10n.get("ep_tables2.propOdd") + "</span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propSingleRowColBackgroundColor") + "</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_single_row_bg_color'>" + html10n.get("ep_tables2.propRow") + "&nbsp;</span><span id='tbl_single_col_bg_color' class='tbl-inline-block'>" + html10n.get("ep_tables2.propCol") + "</span></td></tr>" +
+"<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propRowColAlignment") + "</span></td></tr>" +
+"<tr><td><span class='tbl-inline-block' id='tbl_row_v_align'>" + html10n.get("ep_tables2.propRow") + "&nbsp;</span><span id='tbl_col_v_align' class='tbl-inline-block'>" + html10n.get("ep_tables2.propCol") + "</span></td></tr>" +
 "</table>" +
 "<span class=' tbl-inline-block'>" +
 "<table class='tbl-prop-dim'>" + "<tbody>" +
 "<tr>" +
-  "<td> " + "<span class='tbl-prop-label'>" + "Dimensions" + "</span>&nbsp;&nbsp;<span id='text_input_message'></span>" + "</td>" +
+  "<td> " + "<span class='tbl-prop-label'>" + html10n.get("ep_tables2.propDimensions") + "</span>&nbsp;&nbsp;<span id='text_input_message'></span>" + "</td>" +
   "<td colspan=2></td> " +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>Table width (%)</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propTableWidth") + " (%)</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_width' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Table height (px)</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propTableHeight") + " (px)</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_height' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Column width (px)</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propColumnWidth") + " (px)</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_col_width' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td> " + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Row height (px)</label>" + "</span>" + "</td>" +
+  "<td> " + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propMinRowHeight") + " (px)</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_row_height' type='text' size='4' class='text-input' >" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td> " + "<span class='tbl-prop-label'>" + "<br />Cell Styles " + "</span>" + "</td>" +
+  "<td> " + "<span class='tbl-prop-label'>" + "<br />" + html10n.get("ep_tables2.propCellStyles") + "</span>" + "</td>" +
   "<td colspan=2></td> " +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Font</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propFont") + "</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<select id='tbl_cell_font' class='text-input' style='width:70px;'>" +
-        "<option value='dummy' selected=''>Font</option>" +
+        "<option value='dummy' selected=''>" + html10n.get("ep_tables2.propFont") + "</option>" +
         "<option value='Arial'>Arial</option>" +
         "<option value='Times New Roman'>Times New Roman</option>" +
         "<option value='Calibri'>Calibri</option>" +
@@ -214,22 +235,22 @@ exports.postAceInit = function (hook, context) {
   "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Font Size (px)</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propFontSize") + " (px)</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_font_size' type='text' size='4' class='text-input'>" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Bold </label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propBold") + "</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_bold' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Italic</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propItalic") + "</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_italic' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
 "</tr>" +
 "<tr>" +
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label >Underline</label>" + "</span>" + "</td>" +
+  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label>" + html10n.get("ep_tables2.propUnderline") + "</label>" + "</span>" + "</td>" +
   "<td class='td-spacer'></td>" +
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_decoration' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
 "</tr>" +
@@ -262,24 +283,51 @@ exports.postAceInit = function (hook, context) {
             });
             $.tblContextMenu.addItems([
                 [{
-                    text: "Insert Table",
+                    id: 'tbl_prop_create_table',
+                    text: html10n.get("ep_tables2.menuCreateTable"),
                     submenu: {
                         id: 'tbl_insert',
                         itemData: ["<div id='select_matrix'>0 X 0</div>"]
                     }
                 }],
-                ["Insert Row Above", "Insert Row Below", "Insert Column Right", "Insert Column Left"],
-                ["Delete Row", "Delete Column", "Delete Table"],
+                [{
+                    id: 'tbl_prop_insert_row_above',
+                    text: html10n.get("ep_tables2.menuInsertRowAbove")
+                 },
+                 {
+                    id: 'tbl_prop_insert_row_below',
+                    text: html10n.get("ep_tables2.menuInsertRowBelow")
+                 }, 
+                 { 
+                    id: 'tbl_prop_insert_col_right',
+                    text: html10n.get("ep_tables2.menuInsertColumnRight")
+                 }, 
+                 { 
+                    id: 'tbl_prop_insert_col_left',
+                    text: html10n.get("ep_tables2.menuInsertColumnLeft")
+                }],
+                [{
+                    id: 'tbl_prop_delete_row',
+                    text: html10n.get("ep_tables2.menuDeleteRow")
+                 },
+                 {
+                    id: 'tbl_prop_delete_col',
+                    text: html10n.get("ep_tables2.menuDeleteColumn")
+                 },
+                 {
+                    id: 'tbl_prop_delete_table',
+                    text: html10n.get("ep_tables2.menuDeleteTable")
+                }],
                 [{
                     id: 'tbl_prop_menu_item',
-                    text: "Table Properties",
+                    text: html10n.get("ep_tables2.menuTableProperties"),
                     onclick: {
                         fn: showTblPropPanel
                     }
                 }],
                 [{
                     id: 'tbl_prop_menu_hide',
-                    text: "Close this menu",
+                    text: html10n.get("ep_tables2.menuCloseThisMenu"),
                     onclick: {
                         fn: hideTblContextMenu
                     }
@@ -323,36 +371,36 @@ exports.postAceInit = function (hook, context) {
                 var oEvent = p_aArgs[0],
                     oMenuItem = p_aArgs[1]; // YAHOO.widget.MenuItem instance
                 if (oMenuItem) {
-                    tblReq = oMenuItem.cfg.getProperty("text");
+                    tblReq = oMenuItem.id;
                     disabled = oMenuItem.cfg.getProperty("disabled");
                     if (disabled) return;
                     var id = "";
                     switch (tblReq) {
-                    case "Insert Table":
+                    case "tbl_prop_create_table":
                         id = 'addTbl';
                         break;
-                    case "Insert Row Above":
+                    case "tbl_prop_insert_row_above":
                         id = 'addTblRowA';
                         break;
-                    case "Insert Row Below":
+                    case "tbl_prop_insert_row_below":
                         id = 'addTblRowB';
                         break;
-                    case "Insert Column Left":
+                    case "tbl_prop_insert_col_left":
                         id = 'addTblColL';
                         break;
-                    case "Insert Column Right":
+                    case "tbl_prop_insert_col_right":
                         id = 'addTblColR';
                         break;
-                    case "Delete Table":
+                    case "tbl_prop_delete_table":
                         id = 'delTbl';
                         break;
-                    case "Delete Image":
+                    case "tbl_prop_delete_image":
                         id = 'delImg';
                         break;
-                    case "Delete Row":
+                    case "tbl_prop_delete_row":
                         id = 'delTblRow';
                         break;
-                    case "Delete Column":
+                    case "tbl_prop_delete_col":
                         id = 'delTblCol';
                         break;
                     }
@@ -365,13 +413,25 @@ exports.postAceInit = function (hook, context) {
 
             function initTableProperties() {
                 //tbl col horizontal align		
-                var colVAligns = ['Left', 'Center', 'Right'];
+                var colVAligns = 
+                  [{
+                     id: 'tbl_prop_align_left',
+                     text: html10n.get("ep_tables2.propLeft")
+                   },
+                   {
+                     id: 'tbl_prop_align_center',
+                     text: html10n.get("ep_tables2.propCenter")
+                   }, 
+                   { 
+                     id: 'tbl_prop_align_right',
+                     text: html10n.get("ep_tables2.propRight")
+                  }];
                 $.colVAlignsMenu = new YAHOO.widget.ContextMenu("tbl_col_v_align_menu", {
                     iframe: true,
                     zindex: 1003,
                     shadow: false,
                     position: "dynamic",
-                    keepopen: true,
+                    keepopen: false,
                     clicktohide: true
                 });
                 $.colVAlignsMenu.addItems(colVAligns);
@@ -380,15 +440,28 @@ exports.postAceInit = function (hook, context) {
                     var oEvent = p_aArgs[0],
                         oMenuItem = p_aArgs[1]; // YAHOO.widget.MenuItem instance
                     if (oMenuItem) {
-                        align = oMenuItem.cfg.getProperty("text");
+                        var id = oMenuItem.id;
+                        var text = oMenuItem.cfg.getProperty("text");
+                        var align = "";
+                        switch (id) {
+                        case "tbl_prop_align_left":
+                            align = 'left';
+                            break;
+                        case "tbl_prop_align_center":
+                            align = 'center';
+                            break;
+                        case "tbl_prop_align_right":
+                            align = 'right';
+                            break;
+                        }
                         var selParams = {
                             tblColVAlign: true,
                             attrName: 'colVAlign',
                             attrValue: align,
                             tblPropertyChange: true
                         };
-                        $.colVAlignsMenuButton.set("value", selParams.attrValue);
-                        $("#current-col-v-alignment").html(align);
+                        $("#current-col-v-alignment").html(text);
+                        this.hide();
                         context.ace.callWithAce(function (ace) {
                             ace.ace_doDatatableOptions(selParams);
                         }, 'tblOptions', true);
@@ -397,16 +470,12 @@ exports.postAceInit = function (hook, context) {
                 $.colVAlignsMenuButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em id=\"current-col-v-alignment\">Left</em>",
+                    label: "<em id=\"current-col-v-alignment\">" + html10n.get("ep_tables2.propLeft") + "</em>",
                     container: "tbl_col_v_align"
                 });
                 $('#tbl_col_v_align').click(function () {
-                    var aligned = false;
-                    if (!aligned) {
-                        $.alignMenu($.colVAlignsMenu, 'tbl_col_v_align');
-                    }
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    if ($.oColorPickerDialog) $.oColorPickerDialog.hide();
+                    hidePropsDialogs();
+                    $.alignMenu($.colVAlignsMenu, 'tbl_col_v_align');
                     $.colVAlignsMenu.show();
                     var vAlignValue = $.colVAlignsMenuButton.get("value");
                     if (vAlignValue) {
@@ -422,13 +491,25 @@ exports.postAceInit = function (hook, context) {
                     }
                 });
                 //tbl row vertical align		
-                var rowVAligns = ['Top', 'Center', 'Bottom'];
+                var rowVAligns = 
+                  [{
+                     id: 'tbl_prop_align_top',
+                     text: html10n.get("ep_tables2.propTop")
+                   },
+                   {
+                     id: 'tbl_prop_align_middle',
+                     text: html10n.get("ep_tables2.propCenter")
+                   },
+                   {
+                     id: 'tbl_prop_align_bottom',
+                     text: html10n.get("ep_tables2.propBottom")
+                  }];
                 $.rowVAlignsMenu = new YAHOO.widget.ContextMenu("tbl_row_v_align_menu", {
                     iframe: true,
                     zindex: 1003,
                     shadow: false,
                     position: "dynamic",
-                    keepopen: true,
+                    keepopen: false,
                     clicktohide: true
                 });
                 $.rowVAlignsMenu.addItems(rowVAligns);
@@ -437,15 +518,28 @@ exports.postAceInit = function (hook, context) {
                     var oEvent = p_aArgs[0],
                         oMenuItem = p_aArgs[1]; // YAHOO.widget.MenuItem instance
                     if (oMenuItem) {
-                        align = oMenuItem.cfg.getProperty("text");
+                        var id = oMenuItem.id;
+                        var text = oMenuItem.cfg.getProperty("text");
+                        var align = "";
+                        switch (id) {
+                        case "tbl_prop_align_top":
+                            align = 'top';
+                            break;
+                        case "tbl_prop_align_middle":
+                            align = 'middle';
+                            break;
+                        case "tbl_prop_align_bottom":
+                            align = 'bottom';
+                            break;
+                        }
                         var selParams = {
                             tblRowVAlign: true,
                             attrName: 'rowVAlign',
                             attrValue: align,
                             tblPropertyChange: true
                         };
-                        $.rowVAlignsMenuButton.set("value", selParams.attrValue);
-                        $("#current-v-alignment").html(align);
+                        $("#current-v-alignment").html(text);
+                        this.hide();
                         context.ace.callWithAce(function (ace) {
                             ace.ace_doDatatableOptions(selParams);
                         }, 'tblOptions', true);
@@ -454,16 +548,12 @@ exports.postAceInit = function (hook, context) {
                 $.rowVAlignsMenuButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em id=\"current-v-alignment\">Top</em>",
+                    label: "<em id=\"current-v-alignment\">" + html10n.get("ep_tables2.propTop") + "</em>",
                     container: "tbl_row_v_align"
                 });
                 $('#tbl_row_v_align').click(function () {
-                    var aligned = false;
-                    if (!aligned) {
-                        $.alignMenu($.rowVAlignsMenu, 'tbl_row_v_align');
-                    }
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    if ($.oColorPickerDialog) $.oColorPickerDialog.hide();
+                    hidePropsDialogs();
+                    $.alignMenu($.rowVAlignsMenu, 'tbl_row_v_align');
                     $.rowVAlignsMenu.show();
                     var vAlignValue = $.rowVAlignsMenuButton.get("value");
                     if (vAlignValue) {
@@ -485,7 +575,7 @@ exports.postAceInit = function (hook, context) {
                     zindex: 1003,
                     shadow: false,
                     position: "dynamic",
-                    keepopen: true,
+                    keepopen: false,
                     clicktohide: true
                 });
                 $.borderWidthsMenu.addItems(borderWidths);
@@ -515,12 +605,8 @@ exports.postAceInit = function (hook, context) {
                     container: "tbl_border_width"
                 });
                 $('#tbl_border_width').click(function () {
-                    var aligned = false;
-                    if (!aligned) {
-                        $.alignMenu($.borderWidthsMenu, 'tbl_border_width');
-                    }
-                    if ($.oColorPickerDialog) $.oColorPickerDialog.hide();
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
+                    hidePropsDialogs();
+                    $.alignMenu($.borderWidthsMenu, 'tbl_border_width');
                     $.borderWidthsMenu.show();
                     var widthValue = $.borderWidthPickerButton.get("value");
                     if (widthValue) {
@@ -536,145 +622,141 @@ exports.postAceInit = function (hook, context) {
                     }
                 });
                 $.tblfocusedProperty = "";
-                $('#tbl_properties').click(function () {
-                    if (typeof ($.borderWidthsMenu) != 'undefined') $.borderWidthsMenu.hide();
-                    if (typeof ($.oColorPickerDialog) != 'undefined') $.oColorPickerDialog.hide();
-                    if (typeof ($.rowVAlignsMenu) != 'undefined') $.rowVAlignsMenu.hide();
-                });
                 $.colorPickerAligned = false;
                 $('#tbl_border_color').click(function () {
+                    hidePropsDialogs();
                     if (!$.colorPickerAligned) {
                         createColorPicker();
                     }
                     $.alignMenu($.oColorPickerDialog, 'tbl_border_color');
                     $.tblfocusedProperty = "tbl_border_color";
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    $.oColorPickerDialog.setHeader("Please choose a color for: Table Border color");
+                    $.oColorPickerDialog.setHeader(html10n.get("ep_tables2.propChooseAColorFor") + html10n.get("ep_tables2.propTableBorderColor"));
                     $.oColorPickerDialog.show();
                     var hexValue = $.borderColorPickerButton.get("value");
                     if (hexValue) {
-                        colorPickerButtonClick(hexValue);
+                        var hex2rgb = hexToRgb(hexValue);
+                        $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
                 });
                 $.borderColorPickerButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em  class='color-picker-button' id=\"current-color\">Current color is #FFFFFF.</em>",
+                    label: "<em  class='color-picker-button' id=\"current-color\"></em>",
                     container: "tbl_border_color"
                 });
                 //tbl cell bg color		
                 $.cellBgColorPickerButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em class='color-picker-button' id=\"current-cell-bg-color\">Current color is #FFFFFF.</em>",
+                    label: "<em class='color-picker-button' id=\"current-cell-bg-color\"></em>",
                     container: "tbl_cell_bg_color"
                 });
                 $('#tbl_cell_bg_color').click(function () {
+                    hidePropsDialogs();
                     if (!$.colorPickerAligned) {
                         createColorPicker();
                     }
                     $.alignMenu($.oColorPickerDialog, 'tbl_cell_bg_color');
                     $.tblfocusedProperty = "tbl_cell_bg_color";
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    $.oColorPickerDialog.setHeader("Please choose a color for: Cell Background color");
+                    $.oColorPickerDialog.setHeader(html10n.get("ep_tables2.propChooseAColorFor") + html10n.get("ep_tables2.propCellBackgroundColor"));
                     $.oColorPickerDialog.show();
                     var hexValue = $.cellBgColorPickerButton.get("value");
                     if (hexValue) {
-                        colorPickerButtonClick(hexValue);
+                        var hex2rgb = hexToRgb(hexValue);
+                        $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
                 });
                 //tbl even rows bg color		
                 $.evenRowBgColorPickerButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em class='color-picker-button' id=\"even-row-bg-color\">Current color is #FFFFFF.</em>",
+                    label: "<em class='color-picker-button' id=\"even-row-bg-color\"></em>",
                     container: "tbl_even_row_bg_color"
                 });
                 $('#tbl_even_row_bg_color').click(function () {
+                    hidePropsDialogs();
                     if (!$.colorPickerAligned) {
                         createColorPicker();
                     }
                     $.alignMenu($.oColorPickerDialog, 'tbl_even_row_bg_color');
                     $.tblfocusedProperty = "tbl_even_row_bg_color";
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
-                    $.oColorPickerDialog.setHeader("Please choose a color for: Even Row Background color");
+                    $.oColorPickerDialog.setHeader(html10n.get("ep_tables2.propChooseAColorFor") + html10n.get("ep_tables2.propEvenRowBackgroundColor"));
                     $.oColorPickerDialog.show();
                     var hexValue = $.evenRowBgColorPickerButton.get("value");
                     if (hexValue) {
-                        colorPickerButtonClick(hexValue);
+                        var hex2rgb = hexToRgb(hexValue);
+                        $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
                 });
                 //tbl odd rows bg color		
                 $.oddRowBgColorPickerButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em class='color-picker-button' id=\"odd-row-bg-color\">Current color is #FFFFFF.</em>",
+                    label: "<em class='color-picker-button' id=\"odd-row-bg-color\"></em>",
                     container: "tbl_odd_row_bg_color"
                 });
                 $('#tbl_odd_row_bg_color').click(function () {
+                    hidePropsDialogs();
                     if (!$.colorPickerAligned) {
                         createColorPicker();
                     }
                     $.alignMenu($.oColorPickerDialog, 'tbl_odd_row_bg_color');
                     $.tblfocusedProperty = "tbl_odd_row_bg_color";
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    $.oColorPickerDialog.setHeader("Please choose a color for: Odd Row Background color");
+                    $.oColorPickerDialog.setHeader(html10n.get("ep_tables2.propChooseAColorFor") + html10n.get("ep_tables2.propOddRowBackgroundColor"));
                     $.oColorPickerDialog.show();
                     var hexValue = $.oddRowBgColorPickerButton.get("value");
                     if (hexValue) {
-                        colorPickerButtonClick(hexValue);
+                        var hex2rgb = hexToRgb(hexValue);
+                        $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
                 });
-                //tbl single row bg color		
+                //tbl single row bg color
                 $.singleRowBgColorPickerButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em class='color-picker-button' id=\"single-row-bg-color\">Current color is #FFFFFF.</em>",
+                    label: "<em class='color-picker-button' id=\"single-row-bg-color\"></em>",
                     container: "tbl_single_row_bg_color"
                 });
                 $('#tbl_single_row_bg_color').click(function () {
+                    hidePropsDialogs();
                     if (!$.colorPickerAligned) {
                         createColorPicker();
                     }
                     $.alignMenu($.oColorPickerDialog, 'tbl_single_row_bg_color');
                     $.tblfocusedProperty = "tbl_single_row_bg_color";
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
-                    $.oColorPickerDialog.setHeader("Please choose a color for: Single Row Background color");
+                    $.oColorPickerDialog.setHeader(html10n.get("ep_tables2.propChooseAColorFor") + html10n.get("ep_tables2.propSingleRowBackgroundColor"));
                     $.oColorPickerDialog.show();
                     var hexValue = $.singleRowBgColorPickerButton.get("value");
                     if (hexValue) {
-                        colorPickerButtonClick(hexValue);
+                        var hex2rgb = hexToRgb(hexValue);
+                        $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
                 });
                 //tbl single col bg color		
                 $.singleColBgColorPickerButton = new YAHOO.widget.Button({
                     disabled: false,
                     type: "split",
-                    label: "<em class='color-picker-button' id=\"single-col-bg-color\">Current color is #FFFFFF.</em>",
+                    label: "<em class='color-picker-button' id=\"single-col-bg-color\"></em>",
                     container: "tbl_single_col_bg_color"
                 });
                 $('#tbl_single_col_bg_color').click(function () {
+                    hidePropsDialogs();
                     if (!$.colorPickerAligned) {
                         createColorPicker();
                     }
                     $.alignMenu($.oColorPickerDialog, 'tbl_single_col_bg_color');
                     $.tblfocusedProperty = "tbl_single_col_bg_color";
-                    if ($.rowVAlignsMenu) $.rowVAlignsMenu.hide();
-                    if ($.borderWidthsMenu) $.borderWidthsMenu.hide();
-                    $.oColorPickerDialog.setHeader("Please choose a color for: Single Column Background color");
+                    $.oColorPickerDialog.setHeader(html10n.get("ep_tables2.propChooseAColorFor") + html10n.get("ep_tables2.propSingleColumnBackgroundColor"));
                     $.oColorPickerDialog.show();
                     var hexValue = $.singleColBgColorPickerButton.get("value");
                     if (hexValue) {
-                        colorPickerButtonClick(hexValue);
+                        var hex2rgb = hexToRgb(hexValue);
+                        $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
                 });
                 //tbl property text inputs
                 $('.text-input').change(function () {
+                    hidePropsDialogs();
                     var selParams = {
                         tblPropertyChange: true
                     };
@@ -738,8 +820,8 @@ exports.postAceInit = function (hook, context) {
     };
     $('#tbl-menu').click($.createTableMenu);
     YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
-    $("body").append($('<div id="yui-picker-panel" class="yui-picker-panel">' + '<div class="hd">Please choose a color:</div>' + '<div class="bd">' + '	<div class="yui-picker" id="color-picker-menu"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
-    $("body").append($('<div id="yui-tbl-prop-panel" class="yui-picker-panel">' + '<div class="hd">Table Properties</div>' + '<div class="bd">' + '	<div class="yui-picker" id="tbl-props"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
+    $("body").append($('<div id="yui-picker-panel" class="yui-picker-panel">' + '<div class="hd"></div>' + '<div class="bd">' + '	<div class="yui-picker" id="color-picker-menu"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
+    $("body").append($('<div id="yui-tbl-prop-panel" class="yui-picker-panel">' + '<div class="hd">' + html10n.get("ep_tables2.menuTableProperties") + '</div>' + '<div class="bd">' + '	<div class="yui-picker" id="tbl-props"></div>' + '</div>' + '<div class="ft"></div>' + '</div>'));
     $.createTableMenu(true);
 };
 // Once ace is initialized, we set ace_doDatatableOptions and bind it to the context

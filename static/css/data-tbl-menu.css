@@ -129,7 +129,9 @@ width:66px !important;
 #yui-tbl-prop-panel .ft{
 	display:none;
 }
-
+#yui-picker-controls .bd {
+  height: 40px;
+}
 .tbl-icon{
     	background-image: url("../html/tbl-icon.png") !important;
 	background-size: 44px 24px !important;
