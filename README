@@ -3,11 +3,19 @@ Initial project from Gideon (@github)
 But unfortunately, it's dead and broken..
 I decided to make it works again and improve certain things.
 
-There are still 2 important things to do, but for the time beoing, I don't have a clue how to do it:
+There are still 2 important things to do, but for the time being, I don't have a clue how to do it:
 * Ask the timeslider to call the render function in order to have the tables there
 * Ask the export to call my plugin to create tables in exported files
 
-If you have any idea how to achieve this, please contact me.
+If you have any idea how to achieve this, please contac me or open a ticket.
+
+The plugin is available in English & French for now.
+If you want it in another language, take the locales/en.json file and translate it (it's not big).
+
+
+v0.2.2
+- Localization (En & Fr available)
+- Color dialog boxes improved
 
 v0.2.0
 - Fix to make it work again
