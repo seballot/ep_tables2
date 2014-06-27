@@ -9,19 +9,19 @@ if (typeof (require) != 'undefined') {
 exports.postAceInit = function (hook, context) {
     $.createTableMenu = function (init) {
         if ($.tblContextMenu) {
-            if (!this.tblContextMenuOpened) {
+            if (!$.tblContextMenuOpened) {
               $.alignMenu($.tblContextMenu, 'tbl-menu');
               $.tblContextMenu.show();
-              this.tblContextMenuOpened = true;
+              $.tblContextMenuOpened = true;
             } else {
-              $.tblContextMenu.hide();
-              this.tblContextMenuOpened = false;
+              hideTblContextMenu();
             }
             return;
         }
 
         function hideTblContextMenu() {
-            $.tblContextMenu.cancel();
+            $.tblContextMenu.hide();
+            $.tblContextMenuOpened = false;
         }
 
         function showTblPropPanel() {
@@ -366,7 +366,7 @@ exports.postAceInit = function (hook, context) {
                 context.ace.callWithAce(function (ace) {
                     ace.ace_doDatatableOptions('addTbl', 'addTblX' + $("#select_matrix").text());
                 }, 'tblOptions', true);
-                $.tblContextMenu.hide();
+                hideTblContextMenu();
                 return false;
             });
             $.tblContextMenu.subscribe("click", function (p_sType, p_aArgs) {
@@ -409,6 +409,7 @@ exports.postAceInit = function (hook, context) {
                     context.ace.callWithAce(function (ace) {
                         ace.ace_doDatatableOptions(id);
                     }, 'tblOptions', true);
+                    hideTblContextMenu();
                     return false;
                 }
             });
