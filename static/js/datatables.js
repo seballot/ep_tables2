@@ -38,6 +38,10 @@ exports.postAceInit = function (hook, context) {
                 $.tblPropDialog.render();
                 $.alignMenu($.tblPropDialog, this.id);
                 initTableProperties();
+
+                $('#tbl_btn_close').click(function (e) {
+                  $.tblPropDialog.hide();
+                });
             }
             $.tblPropDialog.show();
         }
@@ -257,20 +261,8 @@ exports.postAceInit = function (hook, context) {
   "<td>" + "<span class=' tbl-inline-block'>" + "<input id='tbl_cell_decoration' type='checkbox' class='text-input'>" + "</span>" + "</td>" +
 "</tr>" +
 "</tbody>" + "</table>" +
-"</span>";
-/*"<span id='img_properties'>" + "<span class='tbl-prop-menu-header'></span><span id='img-prop-menu'class='tbl-prop-menu'>" + 
-"<table class='left-tbl-props tbl-inline-block'>" + "<caption><span class='tbl-prop-label' style='padding-top: 8px;'>" + "Dimensions" + "</span></caption>" + "<tbody>" + 
-"<tr>" + 
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Image width</label>" + "</span>" + "</td>" + 
-  "<td class='td-spacer'></td>" + 
-  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='img_width' type='text' size='4' class='text-input' >" + "</span>" + "</td>" + 
-"</tr>" + 
-"<tr>" + 
-  "<td>" + "<span class='tbl-prop-dim-label tbl-inline-block'>" + "<label  >Image height</label>" + "</span>" + "</td>" + 
-  "<td class='td-spacer'></td>" + 
-  "<td>" + "<span class=' tbl-inline-block'>" + "<input id='img_height' type='text' size='4' class='text-input' >" + "</span>" + "</td>" + 
-"</tr>" + 
-"</table>" + "</span>" + "</span>";*/
+"</span>" +
+"<div id='div_tbl_btn_close'><input type='button' id='tbl_btn_close' value='Close'></div>";
         }
         //initilizer
         if (typeof ($.tblContextMenu) == 'undefined') {

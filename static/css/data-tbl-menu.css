@@ -108,7 +108,14 @@ width:66px !important;
 .td-spacer {
     width: 15px;
 }
-.last_oh_cell {
+#div_tbl_btn_close {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+#div_tbl_btn_close #tbl_btn_close {
+  padding: 5px;
+  font-weight:bold;
 }
 .error-message {
     color: red;
