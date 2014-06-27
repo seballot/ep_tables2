@@ -134,10 +134,10 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 attrsJSO['background-color'] = cellBgColor;
                 var cellHeight = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.height || "";
                 attrsJSO['height'] = cellHeight + 'px';
-                var cellPadding = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.padding || "";
-                attrsJSO['padding-top'] = attrsJSO['padding-bottom'] = attrsJSO['padding-left'] = attrsJSO['padding-right'] = cellPadding + 'px';
                 var cellVAlign = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.vAlign || "";
                 attrsJSO['vertical-align'] = cellVAlign;
+                var cellHAlign = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.hAlign || "";
+                attrsJSO['text-align'] = cellHAlign;
                 var cellFont = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.fontFamily || "";
                 attrsJSO['font-family'] = cellFont;
                 var cellFontSize = typeof (cellAttr) == 'undefined' || cellAttr == null ? "" : cellAttr.fontSize || "";

@@ -12,19 +12,3 @@ If you have any idea how to achieve this, please contac me or open a ticket.
 The plugin is available in English & French for now.
 If you want it in another language, take the locales/en.json file and translate it (it's not big).
 
-
-v0.2.2
-- Localization (En & Fr available)
-- Color dialog boxes improved
-
-v0.2.0
-- Fix to make it work again
-- Add https support by having yahoo library locally as online yahoos libraries have serious access problems
-- Borders have all the same size
-- Fix timeslider Bug (thanks to DanBeard - https://github.com/DanBeard)
-- Added Bold, Italic, Underline & Font familiy styles & Removed Padding (not working correctly)
-- Dimension in % for the table & px for the others
-- Initial Width set to 100%
-- Second click on menu close the menu
-- Menu is closed after clicking on the matrix to create a table
-- Fix 'Enter' key that broke the row

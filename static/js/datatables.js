@@ -27,7 +27,7 @@ exports.postAceInit = function (hook, context) {
         function showTblPropPanel() {
             if (!$.tblPropDialog) {
                 $.tblPropDialog = new YAHOO.widget.Dialog("yui-tbl-prop-panel", {
-                    width: "520px",
+                    width: "540px",
                     height: "370px",
                     close: true,
                     visible: false,
@@ -186,7 +186,7 @@ exports.postAceInit = function (hook, context) {
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label' style='padding-top: 0px;'>" + html10n.get("ep_tables2.propTableBorder") + "</span></td></tr>" +
 "<tr><td><span class='tbl-inline-block' id='tbl_border_color'>&nbsp;</span><span id='tbl_border_width'class='tbl-inline-block tbl_border_width'></span></td></tr>" +
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propCellBackgroundColor") + "</span></td></tr>" + 
-"<tr><td><span id='tbl_cell_bg_color'></td></tr><tr><td></span></td></tr>" +
+"<tr><td><span id='tbl_cell_bg_color' class='tbl-inline-block'></span><span id='tbl_cell_h_align' class='tbl-inline-block'></span><span id='tbl_cell_v_align' class='tbl-inline-block'></span></td></tr>" +
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propEvenOddRowBackgroundColor") + "</span></td></tr>" +
 "<tr><td><span class='tbl-inline-block' id='tbl_even_row_bg_color'>" + html10n.get("ep_tables2.propEven") + "&nbsp;</span><span id='tbl_odd_row_bg_color' class='tbl-inline-block'>" + html10n.get("ep_tables2.propOdd") + "</span></td></tr>" +
 "<tr><td class='tbl-prop-label-td'><span class='tbl-prop-label'><br />" + html10n.get("ep_tables2.propSingleRowColBackgroundColor") + "</span></td></tr>" +
@@ -332,7 +332,7 @@ exports.postAceInit = function (hook, context) {
             $.tblContextMenu.render(document.body);
             $.alignMenu = function (menu, id, addX, addY, scrollY) {
                 var region = YAHOO.util.Dom.getRegion(id);
-                if (typeof (id) == 'string' && (id == 'tbl-menu' || id == 'upload_image_cont')) {
+                if (typeof (id) == 'string' && id == 'tbl-menu') {
                     menu.cfg.setProperty("xy", [region.left, region.bottom]);
                 } else if (typeof (id) == 'string') {
                     menu.cfg.setProperty("xy", [region.right, region.top]);
@@ -420,6 +420,10 @@ exports.postAceInit = function (hook, context) {
                    { 
                      id: 'tbl_prop_align_right',
                      text: html10n.get("ep_tables2.propRight")
+                   },
+                   {
+                     id: 'tbl_prop_align_col_remove',
+                     text: "(" + html10n.get("ep_tables2.propBtnRemove") + ")"
                   }];
                 $.colVAlignsMenu = new YAHOO.widget.ContextMenu("tbl_col_v_align_menu", {
                     iframe: true,
@@ -448,6 +452,9 @@ exports.postAceInit = function (hook, context) {
                         case "tbl_prop_align_right":
                             align = 'right';
                             break;
+                        case "tbl_prop_align_col_remove":
+                            align = '';
+                            break;
                         }
                         var selParams = {
                             tblColVAlign: true,
@@ -472,18 +479,6 @@ exports.postAceInit = function (hook, context) {
                     hidePropsDialogs();
                     $.alignMenu($.colVAlignsMenu, 'tbl_col_v_align');
                     $.colVAlignsMenu.show();
-                    var vAlignValue = $.colVAlignsMenuButton.get("value");
-                    if (vAlignValue) {
-                        var selParams = {
-                            tblColVAlign: true,
-                            attrName: 'colVAlign',
-                            attrValue: vAlignValue,
-                            tblPropertyChange: true
-                        };
-                        context.ace.callWithAce(function (ace) {
-                            ace.ace_doDatatableOptions(selParams);
-                        }, 'tblOptions', true);
-                    }
                 });
                 //tbl row vertical align		
                 var rowVAligns = 
@@ -498,6 +493,10 @@ exports.postAceInit = function (hook, context) {
                    {
                      id: 'tbl_prop_align_bottom',
                      text: html10n.get("ep_tables2.propBottom")
+                   },
+                   {
+                     id: 'tbl_prop_align_row_remove',
+                     text: "(" + html10n.get("ep_tables2.propBtnRemove") + ")"
                   }];
                 $.rowVAlignsMenu = new YAHOO.widget.ContextMenu("tbl_row_v_align_menu", {
                     iframe: true,
@@ -526,6 +525,9 @@ exports.postAceInit = function (hook, context) {
                         case "tbl_prop_align_bottom":
                             align = 'bottom';
                             break;
+                        case "tbl_prop_align_row_remove":
+                            align = '';
+                            break;
                         }
                         var selParams = {
                             tblRowVAlign: true,
@@ -550,18 +552,6 @@ exports.postAceInit = function (hook, context) {
                     hidePropsDialogs();
                     $.alignMenu($.rowVAlignsMenu, 'tbl_row_v_align');
                     $.rowVAlignsMenu.show();
-                    var vAlignValue = $.rowVAlignsMenuButton.get("value");
-                    if (vAlignValue) {
-                        var selParams = {
-                            tblRowVAlign: true,
-                            attrName: 'rowVAlign',
-                            attrValue: vAlignValue,
-                            tblPropertyChange: true
-                        };
-                        context.ace.callWithAce(function (ace) {
-                            ace.ace_doDatatableOptions(selParams);
-                        }, 'tblOptions', true);
-                    }
                 });
                 //tbl border width
                 var borderWidths = ['0px', '1px', '2px', '3px', '4px', '5px', '6px', '7px', '8px'];
@@ -660,6 +650,152 @@ exports.postAceInit = function (hook, context) {
                         var hex2rgb = hexToRgb(hexValue);
                         $.oColorPicker.setValue([hex2rgb.r, hex2rgb.g, hex2rgb.b]);
                     }
+                });
+                // Cell horizontal align
+                var cellHAligns = 
+                  [{
+                     id: 'tbl_prop_cell_align_left',
+                     text: html10n.get("ep_tables2.propLeft")
+                   },
+                   {
+                     id: 'tbl_prop_cell_align_center',
+                     text: html10n.get("ep_tables2.propCenter")
+                   }, 
+                   { 
+                     id: 'tbl_prop_cell_align_right',
+                     text: html10n.get("ep_tables2.propRight")
+                   }, 
+                   { 
+                     id: 'tbl_prop_cell_h_align_remove',
+                     text: "(" + html10n.get("ep_tables2.propBtnRemove") + ")"
+                  }];
+                $.cellHAlignsMenu = new YAHOO.widget.ContextMenu("tbl_cell_h_align_menu", {
+                    iframe: true,
+                    zindex: 1003,
+                    shadow: false,
+                    position: "dynamic",
+                    keepopen: false,
+                    clicktohide: true
+                });
+                $.cellHAlignsMenu.addItems(cellHAligns);
+                $.cellHAlignsMenu.render(document.body);
+                $.cellHAlignsMenu.subscribe("click", function (p_sType, p_aArgs) {
+                    var oEvent = p_aArgs[0],
+                        oMenuItem = p_aArgs[1]; // YAHOO.widget.MenuItem instance
+                    if (oMenuItem) {
+                        var id = oMenuItem.id;
+                        var text = oMenuItem.cfg.getProperty("text");
+                        var align = "";
+                        switch (id) {
+                        case "tbl_prop_cell_align_left":
+                            align = 'left';
+                            break;
+                        case "tbl_prop_cell_align_center":
+                            align = 'center';
+                            break;
+                        case "tbl_prop_cell_align_right":
+                            align = 'right';
+                            break;
+                        case "tbl_prop_cell_h_align_remove":
+                            align = '';
+                            break;
+                        }
+                        var selParams = {
+                            tblCellHAlign: true,
+                            attrName: 'hAlign',
+                            attrValue: align,
+                            tblPropertyChange: true
+                        };
+                        $("#current-cell-h-alignment").html(text);
+                        this.hide();
+                        context.ace.callWithAce(function (ace) {
+                            ace.ace_doDatatableOptions(selParams);
+                        }, 'tblOptions', true);
+                    }
+                });
+                $.cellHAlignsMenuButton = new YAHOO.widget.Button({
+                    disabled: false,
+                    type: "split",
+                    label: "<em id=\"current-cell-h-alignment\">" + html10n.get("ep_tables2.propLeft") + "</em>",
+                    container: "tbl_cell_h_align"
+                });
+                $('#tbl_cell_h_align').click(function () {
+                    hidePropsDialogs();
+                    $.alignMenu($.cellHAlignsMenu, 'tbl_cell_h_align');
+                    $.cellHAlignsMenu.show();
+                });
+                // Cell vertical align
+                var cellVAligns = 
+                  [{
+                     id: 'tbl_prop_cell_align_top',
+                     text: html10n.get("ep_tables2.propTop")
+                   },
+                   {
+                     id: 'tbl_prop_cell_align_middle',
+                     text: html10n.get("ep_tables2.propCenter")
+                   }, 
+                   { 
+                     id: 'tbl_prop_cell_align_bottom',
+                     text: html10n.get("ep_tables2.propBottom")
+                   }, 
+                   { 
+                     id: 'tbl_prop_cell_v_align_remove',
+                     text: "(" + html10n.get("ep_tables2.propBtnRemove") + ")"
+                  }];
+                $.cellVAlignsMenu = new YAHOO.widget.ContextMenu("tbl_cell_v_align_menu", {
+                    iframe: true,
+                    zindex: 1003,
+                    shadow: false,
+                    position: "dynamic",
+                    keepopen: false,
+                    clicktohide: true
+                });
+                $.cellVAlignsMenu.addItems(cellVAligns);
+                $.cellVAlignsMenu.render(document.body);
+                $.cellVAlignsMenu.subscribe("click", function (p_sType, p_aArgs) {
+                    var oEvent = p_aArgs[0],
+                        oMenuItem = p_aArgs[1]; // YAHOO.widget.MenuItem instance
+                    if (oMenuItem) {
+                        var id = oMenuItem.id;
+                        var text = oMenuItem.cfg.getProperty("text");
+                        var align = "";
+                        switch (id) {
+                        case "tbl_prop_cell_align_top":
+                            align = 'top';
+                            break;
+                        case "tbl_prop_cell_align_middle":
+                            align = 'middle';
+                            break;
+                        case "tbl_prop_cell_align_bottom":
+                            align = 'bottom';
+                            break;
+                        case "tbl_prop_cell_v_align_remove":
+                            align = '';
+                            break;
+                        }
+                        var selParams = {
+                            tblCellVAlign: true,
+                            attrName: 'vAlign',
+                            attrValue: align,
+                            tblPropertyChange: true
+                        };
+                        $("#current-cell-v-alignment").html(text);
+                        this.hide();
+                        context.ace.callWithAce(function (ace) {
+                            ace.ace_doDatatableOptions(selParams);
+                        }, 'tblOptions', true);
+                    }
+                });
+                $.cellVAlignsMenuButton = new YAHOO.widget.Button({
+                    disabled: false,
+                    type: "split",
+                    label: "<em id=\"current-cell-v-alignment\">" + html10n.get("ep_tables2.propTop") + "</em>",
+                    container: "tbl_cell_v_align"
+                });
+                $('#tbl_cell_v_align').click(function () {
+                    hidePropsDialogs();
+                    $.alignMenu($.cellVAlignsMenu, 'tbl_cell_v_align');
+                    $.cellVAlignsMenu.show();
                 });
                 //tbl even rows bg color		
                 $.evenRowBgColorPickerButton = new YAHOO.widget.Button({
@@ -768,9 +904,6 @@ exports.postAceInit = function (hook, context) {
                     } else if (this.id == "tbl_row_height") {
                         selParams.tblCellHeight = true;
                         selParams.attrName = "height";
-                    } else if (this.id == "tbl_cell_padding") {
-                        selParams.tblCellPadding = true;
-                        selParams.attrName = "padding";
                     } else if (this.id == "tbl_cell_font") {
                         selParams.tblCellFont = true;
                         selParams.attrName = "fontFamily";
@@ -790,13 +923,6 @@ exports.postAceInit = function (hook, context) {
                         selParams.tblCellDecoration = true;
                         selParams.attrName = "textDecoration";
                         selParams.attrValue = this.checked?"underline":"";
-                    } //image attrs
-                    else if (this.id == "img_width") {
-                        selParams.imgWidth = true;
-                        selParams.attrName = "width";
-                    } else if (this.id == "img_height") {
-                        selParams.imgHeight = true;
-                        selParams.attrName = "height";
                     }
                     this.value = '';
                     $('#text_input_message').text("Ok");
@@ -970,7 +1096,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                 OVERHEAD_LEN_ROW_END: '"],'.length,
                 JS_KEY_CODE_BS: 8,
                 JS_KEY_CODE_DEL: 46,
-                TBL_OPTIONS: ['addTbl', 'addTblRowA', 'addTblRowB', 'addTblColL', 'addTblColR', 'delTbl', 'delTblRow', 'delTblCol', 'delImg']
+                TBL_OPTIONS: ['addTbl', 'addTblRowA', 'addTblRowB', 'addTblColL', 'addTblColR', 'delTbl', 'delTblRow', 'delTblCol']
             },
             /* passed parameters */
             context: null
@@ -1384,22 +1510,8 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                         update = true;
                     }
                 }
-                /*
-
-			set or unset table cells attrs
-
-			bold , italic , line-through/underline;
-
-			*/
-                if (props.tblCellFontWeight || props.tblCellFontStyle || props.tblCellTextDecoration) {
-                    var tblProps = this.addCellAttr(start, tblJSONObj, tblProperties, props.attrName, props.attrValue);
-                    if (tblProps) {
-                        tblProperties = tblProps;
-                        update = true;
-                    }
-                }
-                //cell background color, height, and padding, cell font size, cell bold, celle italic
-                if (props.tblCellFont || props.tblCellFontSize || props.tblCellBgColor || props.tblCellHeight || props.tblCellPadding || props.tblcellVAlign || props.tblCellBold || props.tblCellItalic || props.tblCellDecoration) {
+                //cell background color, height, font, font size, font-weight, italic, text-decoration, v-align, h-align 
+                if (props.tblCellFont || props.tblCellFontSize || props.tblCellBgColor || props.tblCellHeight || props.tblcellVAlign || props.tblCellBold || props.tblCellItalic || props.tblCellDecoration || props.tblCellVAlign || props.tblCellHAlign) {
                     var tblProps = this.addCellAttr(start, tblJSONObj, tblProperties, props.attrName, props.attrValue);
                     if (tblProps) {
                         tblProperties = tblProps;

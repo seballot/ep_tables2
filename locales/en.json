@@ -15,7 +15,7 @@
 , "ep_tables2.propBottom": "Bottom"
 , "ep_tables2.propChooseAColorFor": "Pick a Color for: "
 , "ep_tables2.propTableBorderColor": "Table Border Color"
-, "ep_tables2.propCellBackgroundColor": "Cell Background Color"
+, "ep_tables2.propCellBackgroundColor": "Cell Background Color & Alignment"
 , "ep_tables2.propEvenRowBackgroundColor": "Even Rows Background Color"
 , "ep_tables2.propOddRowBackgroundColor": "Odd Rows Background Color"
 , "ep_tables2.propSingleRowBackgroundColor": "Single Row Background Color"
