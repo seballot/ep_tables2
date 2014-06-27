@@ -72,7 +72,7 @@ exports.postAceInit = function (hook, context) {
                 this.cancel();
             }
             handleDialogRemoveColor = function () {
-                colorPickerButtonClick(null);
+                colorPickerButtonClick("remove");
             }
             $.oColorPickerDialog = new YAHOO.widget.Dialog("yui-picker-panel", {
                 width: "340px",
@@ -82,7 +82,7 @@ exports.postAceInit = function (hook, context) {
                 zindex: 1002,
                 constraintoviewport: true,
                 buttons: [
-//                  { text: html10n.get("ep_tables2.propBtnRemove"), handler:this.handleDialogRemoveColor },
+                  { text: html10n.get("ep_tables2.propBtnRemove"), handler:this.handleDialogRemoveColor },
                   { text: html10n.get("ep_tables2.propBtnValidate"), handler: this.handleDialogCancel, isDefault:true }
                 ]
             });
@@ -112,7 +112,9 @@ exports.postAceInit = function (hook, context) {
         }
 
         function colorPickerButtonClick(sColor) {
-            if (typeof (sColor) == 'string' && sColor != null && sColor.indexOf("#") == -1) {
+            if (typeof (sColor) == 'string' && sColor == 'remove') {
+                sColor = '';
+            } else if (typeof (sColor) == 'string' && sColor != null && sColor.indexOf("#") == -1) {
                 sColor = "#" + sColor;
             } else if (typeof (sColor) == "object") {
                 sColor = this.get("hex") == null ? this.get("value") : "#" + this.get("hex");
