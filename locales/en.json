@@ -41,4 +41,5 @@
 , "ep_tables2.propUnderline": "Underline"
 , "ep_tables2.propBtnValidate": "Ok"
 , "ep_tables2.propBtnRemove": "Remove"
+, "ep_tables2.propBtnClose": "Close"
 }

@@ -262,7 +262,7 @@ exports.postAceInit = function (hook, context) {
 "</tr>" +
 "</tbody>" + "</table>" +
 "</span>" +
-"<div id='div_tbl_btn_close'><input type='button' id='tbl_btn_close' value='Close'></div>";
+"<div id='div_tbl_btn_close'><input type='button' id='tbl_btn_close' value='" + html10n.get("ep_tables2.propBtnClose") + "'></div>";
         }
         //initilizer
         if (typeof ($.tblContextMenu) == 'undefined') {
