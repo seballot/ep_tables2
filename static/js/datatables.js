@@ -953,23 +953,32 @@ exports.aceInitialized = function (hook, context) {
 exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
     // Iterate through the child nodes (spans) and point SyntaxHighlighter at them
 
-    //don't do this if the node given to us isn't really a DOM node. 
-    //In the 'playback' tag, the node given here is a fake dictionary that looks like a node
-    if(!args.node.tagName) return;
+    // Do nothing if the line is not a table line (args.node.tagName -> to check if in timeslider page)
+    if(!args.node.tagName && args.node.innerHTML.indexOf("data-tables") == -1) return;
 
-    var children = args.node.children;
-    for (var i = 0; i < children.length; i++) {
-        if (args.node.children[i].className.indexOf("list") != -1 || args.node.children[i].className.indexOf("tag") != -1 || args.node.children[i].className.indexOf("url") != -1) continue;
-        var lineText = "";
-        if (args.node.children[i].innerText) lineText = args.node.children[i].innerText;
-        else lineText = args.node.children[i].textContent;
-        if (lineText && lineText.indexOf("data-tables") != -1) {
-            var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
-            dtAttrs = dtAttrs || "";
-            DatatablesRenderer.render({}, args.node.children[i], dtAttrs);
-            exports.Datatables.attributes = null;
-        }
+    if (!args.node.tagName && args.node.innerHTML && args.node.innerHTML.indexOf("data-tables") != -1){
+      // For the Timeslider
+      var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
+      DatatablesRenderer.render("timeslider", args.node, dtAttrs);
+    } else {
+      // For the Pad
+      var children = args.node.children;
+      for (var i = 0; i < children.length; i++) {
+          if (args.node.children[i].className.indexOf("list") != -1 || args.node.children[i].className.indexOf("tag") != -1 || args.node.children[i].className.indexOf("url") != -1) continue;
+          var lineText = "";
+          if (args.node.children[i].innerText) lineText = args.node.children[i].innerText;
+          else lineText = args.node.children[i].textContent;
+          if (lineText && lineText.indexOf("data-tables") != -1) {
+              var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
+              dtAttrs = dtAttrs || "";
+              DatatablesRenderer.render({}, args.node.children[i], dtAttrs);
+              exports.Datatables.attributes = null;
+          }
+      }
     }
+}
+exports.eejsBlock_timesliderScripts = function (hook_name, args, cb) {
+    args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesScriptsTimeslider.ejs");
 }
 exports.eejsBlock_scripts = function (hook_name, args, cb) {
     args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesScripts.ejs");
@@ -996,8 +1005,8 @@ exports.aceStartLineAndCharForPoint = function (hook, context) {
 			selStart = Datatables.getLineAndCharForPoint();
         }
     } catch (error) {
-        top.console.log('error ' + error);
-        top.console.log('context rep' + Datatables.context.rep);
+        console.log('error ' + error);
+        console.log('context rep' + Datatables.context.rep);
     }
     return selStart;
 };

@@ -5,7 +5,8 @@
 		"hooks" : {
 			"eejsBlock_styles": "ep_tables2/static/js/datatables:eejsBlock_styles",
 			"eejsBlock_scripts": "ep_tables2/static/js/datatables:eejsBlock_scripts",
-			"eejsBlock_editbarMenuLeft": "ep_tables2/static/js/datatables:eejsBlock_editbarMenuLeft"
+			"eejsBlock_editbarMenuLeft": "ep_tables2/static/js/datatables:eejsBlock_editbarMenuLeft",
+			"eejsBlock_timesliderScripts": "ep_tables2/static/js/datatables:eejsBlock_timesliderScripts"
 
 		},
 		"client_hooks" : {			
@@ -19,7 +20,6 @@
 			"aceInitialized": "ep_tables2/static/js/datatables:aceInitialized",
 			"postAceInit": "ep_tables2/static/js/datatables:postAceInit",
 			"disableAuthorColorsForThisLine": "ep_tables2/static/js/linestylefilter:disableAuthorColorsForThisLine"
-				
 		}
 	}]
 }

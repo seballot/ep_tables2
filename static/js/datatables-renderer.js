@@ -2,7 +2,13 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
         var dRenderer = {
             render: function (params, element, attributes) {
                 var renderer = new DatatablesRenderer.Renderer();
-                if (element.innerText) code = element.innerText;
+                if (params == "timeslider") {
+                  var regex1 = new RegExp('(^\<span\ class=""\>)', 'i');
+                  var regex2 = new RegExp('(\<\/span\>)$', 'i');
+                  code = renderer.htmlspecialchars_decode(element.innerHTML)
+                           .replace(regex1, '')
+                           .replace(regex2, '');
+                } else if (element.innerText) code = element.innerText;
                 else code = element.textContent;
                 element.innerHTML = renderer.getHtml(code, attributes);
             }
@@ -153,6 +159,16 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     if (attrName && attrsJSO[attrName] != "" && attrsJSO[attrName] != "NaNpx" && attrsJSO[attrName] != "px") attrsString += attrName + ":" + attrsJSO[attrName] + " !important;";
                 }
                 return attrsString;
+            },
+            htmlspecialchars_decode: function (string) {
+              string = string.toString()
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&#0*39;/g, "'")
+                .replace(/&quot;/g, '"')
+                .replace(/&amp;/g, '&');
+
+              return string;
             },
             getHtml: function (code, attributes) {
                 var JSONCode = "";
