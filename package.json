@@ -2,10 +2,10 @@
   "author": "quenenni,Gedion Woldeselassie,Tenzin Tsetan <quenenni@github>",
   "name": "ep_tables2",
   "description": "Adds tables to etherpad-lite",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "repository": {
     "type": "git",
-    "url": "git://github.com/queneni/ep_tables2.git"
+    "url": "git://github.com/quenenni/ep_tables2.git"
   },
   "engines": {
     "node": "*"
@@ -32,7 +32,7 @@
   ],
   "license": " Apache License V2",
   "bugs": {
-    "url": "https://github.com/queneni/ep_tables2/issues"
+    "url": "https://github.com/quenenni/ep_tables2/issues"
   },
-  "homepage": "https://github.com/queneni/ep_tables2"
+  "homepage": "https://github.com/quenenni/ep_tables2"
 }

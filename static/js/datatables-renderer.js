@@ -8,9 +8,18 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                   code = renderer.htmlspecialchars_decode(element.innerHTML)
                            .replace(regex1, '')
                            .replace(regex2, '');
+                } else if (params == "export") {
+                  code = element.text;
                 } else if (element.innerText) code = element.innerText;
                 else code = element.textContent;
-                element.innerHTML = renderer.getHtml(code, attributes);
+
+                if (params == "export") {
+                  // For export, I need to send back the formatted text
+                  return renderer.getHtml(code, attributes);
+                } else {
+                  // For others, I need to modify the content of the element
+                  element.innerHTML = renderer.getHtml(code, attributes);
+                }
             }
         }; // end of dRenderer
         dRenderer.Renderer = function () {

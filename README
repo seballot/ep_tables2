@@ -7,6 +7,8 @@ I decided to take over and improve it.
 The plugin is available in English & French for now.
 If you want another language, take the locales/en.json file and translate it (it's not big).
 
-TODO:
-* Ask the export system to call the plugin to create tables in exported files
-(If you have any idea how to do this, please let me know)
+Export the tables:
+It only works with Html export.
+Text & Dokuwiki export do'nt have a hook for me to handle the formatting.
+Other exports from others plugins must manage it in their code, but I'll gladly help if they contact me.
+

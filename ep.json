@@ -6,7 +6,8 @@
 			"eejsBlock_styles": "ep_tables2/static/js/datatables:eejsBlock_styles",
 			"eejsBlock_scripts": "ep_tables2/static/js/datatables:eejsBlock_scripts",
 			"eejsBlock_editbarMenuLeft": "ep_tables2/static/js/datatables:eejsBlock_editbarMenuLeft",
-			"eejsBlock_timesliderScripts": "ep_tables2/static/js/datatables:eejsBlock_timesliderScripts"
+			"eejsBlock_timesliderScripts": "ep_tables2/static/js/datatables:eejsBlock_timesliderScripts",
+                        "getLineHTMLForExport" : "ep_tables2/export2html:getLineHTMLForExport"
 
 		},
 		"client_hooks" : {			
