@@ -9,6 +9,6 @@ If you want another language, take the locales/en.json file and translate it (it
 
 Export the tables:
 It only works with Html export.
-Text & Dokuwiki export do'nt have a hook for me to handle the formatting.
+Text & Dokuwiki exports don't have a hook for me to handle the formatting.
 Other exports from others plugins must manage it in their code, but I'll gladly help if they contact me.
 
