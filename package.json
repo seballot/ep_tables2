@@ -2,7 +2,7 @@
   "author": "quenenni,Gedion Woldeselassie,Tenzin Tsetan <quenenni@github>",
   "name": "ep_tables2",
   "description": "Adds tables to etherpad-lite",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "repository": {
     "type": "git",
     "url": "git://github.com/quenenni/ep_tables2.git"
