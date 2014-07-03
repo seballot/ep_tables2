@@ -1002,13 +1002,12 @@ exports.aceStartLineAndCharForPoint = function (hook, context) {
     try {
         Datatables.context = context;
         if (Datatables.isFocused()) {
-			selStart = Datatables.getLineAndCharForPoint();
+          selStart = Datatables.getLineAndCharForPoint();
+          return selStart;
         }
     } catch (error) {
         console.log('error ' + error);
-        console.log('context rep' + Datatables.context.rep);
     }
-    return selStart;
 };
 
 exports.aceEndLineAndCharForPoint = function (hook, context) {
@@ -1017,12 +1016,11 @@ exports.aceEndLineAndCharForPoint = function (hook, context) {
         Datatables.context = context;
         if (Datatables.isFocused()) {
           selEndLine =   Datatables.getLineAndCharForPoint();
+          return selEndLine;
         }
     } catch (error) {
-        top.console.log('error ' + error);
-        top.console.log('context rep' + Datatables.context.rep);
+        console.log('error ' + error);
     }
-    return selEndLine;
 };
 exports.aceKeyEvent = function (hook, context) {
     var specialHandled = false;
