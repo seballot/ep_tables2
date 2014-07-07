@@ -113,10 +113,10 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                                 } else cellsWithBr += tdText[k];
                             }
                             htmlTbl += "<td  name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + " border-left:" + 
-                            tblBorderWidth + "px solid " + tblBorderColor + borderTop + lastCellBorder + "' >" + cellsWithBr + 
+                            tblBorderWidth + "px solid " + tblBorderColor + ";" + borderTop + lastCellBorder + "' >" + cellsWithBr + 
                             "<br value='tblBreak'></td>" + delimCell;
                         } else {
-                            htmlTbl += "<td name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + lastCellBorder + " border-left:" + tblBorderWidth + "px solid " + tblBorderColor + borderTop + "' >" + tds[i] + "" + "<br value='tblBreak'></td>" + delimCell
+                            htmlTbl += "<td name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + lastCellBorder + " border-left:" + tblBorderWidth + "px solid " + tblBorderColor + ";" + borderTop + "' >" + tds[i] + "" + "<br value='tblBreak'></td>" + delimCell
                         }
                     }
                     var bracketAndcomma = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\"}";
