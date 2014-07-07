@@ -4,7 +4,7 @@ Add Tables in Etherpad-Lite
 Initial project (but dead & broken) from Gideon (https://github.com/gedion/ep_tables)
 I decided to take over and improve it.
 
-The plugin is available in English & French for now.
+The plugin is available in English, French & German (Thanks to @Brom2).
 If you want another language, take the locales/en.json file and translate it (it's not big).
 
 Export the tables:
