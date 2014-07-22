@@ -1,6 +1,10 @@
 if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = function () {
         var dRenderer = {
             render: function (params, element, attributes) {
+		// Strange behaviour from IE. 
+                // It comes here 2 times per row, so I have to stop rendering a second time to avoid desctruction of the rendering
+		if (params != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) return;
+
                 var renderer = new DatatablesRenderer.Renderer();
                 if (params == "timeslider") {
                   var regex1 = new RegExp('(^\<span\ class=""\>)', 'i');
