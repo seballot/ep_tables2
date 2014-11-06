@@ -963,12 +963,11 @@ exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
     } else {
       // For the Pad
       var children = args.node.children;
-//console.log(children);
 
       lineText = args.node.children[0].innerText?args.node.children[0].innerText:args.node.children[0].textContent;
       lineText_end  = args.node.children[0].innerText?args.node.children[children.length -1].innerText:args.node.children[children.length -1].textContent;
 
-      // Case when etherpad interect with the content of a cell and breaks the table line into several lines (like when having an url inside a cell
+      // Case when etherpad interact with the content of a cell and breaks the table line into several lines (like when writing an url inside a cell)
       // In that case, we have to regroup everything before rendering the line.
       if (children.length > 1 && lineText.indexOf("payload") != -1 && lineText_end.indexOf("data-tables") != -1) {
         for (var i = 1; i < children.length; i++) {
