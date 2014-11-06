@@ -963,17 +963,44 @@ exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
     } else {
       // For the Pad
       var children = args.node.children;
-      for (var i = 0; i < children.length; i++) {
-          if (args.node.children[i].className.indexOf("list") != -1 || args.node.children[i].className.indexOf("tag") != -1 || args.node.children[i].className.indexOf("url") != -1) continue;
-          var lineText = "";
-          if (args.node.children[i].innerText) lineText = args.node.children[i].innerText;
-          else lineText = args.node.children[i].textContent;
-          if (lineText && lineText.indexOf("data-tables") != -1) {
-              var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
-              dtAttrs = dtAttrs || "";
-              DatatablesRenderer.render({}, args.node.children[i], dtAttrs);
-              exports.Datatables.attributes = null;
+//console.log(children);
+
+      lineText = args.node.children[0].innerText?args.node.children[0].innerText:args.node.children[0].textContent;
+      lineText_end  = args.node.children[0].innerText?args.node.children[children.length -1].innerText:args.node.children[children.length -1].textContent;
+
+      // Case when etherpad interect with the content of a cell and breaks the table line into several lines (like when having an url inside a cell
+      // In that case, we have to regroup everything before rendering the line.
+      if (children.length > 1 && lineText.indexOf("payload") != -1 && lineText_end.indexOf("data-tables") != -1) {
+        for (var i = 1; i < children.length; i++) {
+
+          if (args.node.children[0].innerText) {
+            args.node.children[0].innerText += args.node.children[i].innerText;
+            args.node.children[i].innerText = "";
+          } else {
+            args.node.children[0].textContent += args.node.children[i].textContent;
+            args.node.children[i].textContent = "";
           }
+          args.node.children[i] = null;
+        }
+
+        var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
+        dtAttrs = dtAttrs || "";
+        DatatablesRenderer.render({}, args.node.children[0], dtAttrs);
+        exports.Datatables.attributes = null;
+
+      } else {
+        for (var i = 0; i < children.length; i++) {
+            if (args.node.children[i].className.indexOf("list") != -1 || args.node.children[i].className.indexOf("tag") != -1 || args.node.children[i].className.indexOf("url") != -1) continue;
+            var lineText = "";
+            if (args.node.children[i].innerText) lineText = args.node.children[i].innerText;
+            else lineText = args.node.children[i].textContent;
+            if (lineText && lineText.indexOf("data-tables") != -1) {
+                var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
+                dtAttrs = dtAttrs || "";
+                DatatablesRenderer.render({}, args.node.children[i], dtAttrs);
+                exports.Datatables.attributes = null;
+            }
+        }
       }
     }
 }
@@ -996,6 +1023,10 @@ exports.aceAttribsToClasses = function (hook, context) {
         Datatables.attributes = context.value;
         return ['tblProp:' + context.value];
     }
+}
+exports.aceEditEvent = function (hook, context) {
+/*  console.log("---------------------------");
+  console.log(context);*/
 }
 exports.aceStartLineAndCharForPoint = function (hook, context) {
 	var selStart = null;
@@ -1045,7 +1076,7 @@ exports.aceKeyEvent = function (hook, context) {
                 Datatables.doReturnKey();
                 specialHandled = true;
             }
-            if ((!specialHandled) && isTypeForSpecialKey && (keyCode == Datatables.vars.JS_KEY_CODE_DEL || keyCode == Datatables.vars.JS_KEY_CODE_BS || (String.fromCharCode(which).toLowerCase() == "h" && (evt.ctrlKey)))) {
+            if ((!specialHandled) && isTypeForSpecialKey && ((type == "keydown" && keyCode == Datatables.vars.JS_KEY_CODE_DEL) || keyCode == Datatables.vars.JS_KEY_CODE_BS || (String.fromCharCode(which).toLowerCase() == "h" && (evt.ctrlKey)))) {
                 context.editorInfo.ace_fastIncorp(20);
                 evt.preventDefault();
                 specialHandled = true;

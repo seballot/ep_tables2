@@ -108,6 +108,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                             lastCellBorder = "border-right:" + tblBorderWidth + "px solid " + tblBorderColor + "!important;";
                             quoteAndComma = "";
                         }
+                        tds[i] = this.setLinks(tds[i]);
                         if (tds[i].indexOf('/r/n') != -1) {
                             cellsWithBr = "";
                             var tdText = tds[i].split('/r/n');
@@ -182,6 +183,10 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 .replace(/&amp;/g, '&');
 
               return string;
+            },
+            setLinks: function (data) {
+              data = data.replace(/(https?:\/\/[^\s]+)/ig, "<a href='\$1' target='blank'>\$1</a>");
+              return data;
             },
             getHtml: function (code, attributes) {
                 var JSONCode = "";
