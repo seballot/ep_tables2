@@ -10,13 +10,13 @@
                         "getLineHTMLForExport" : "ep_tables2/export2html:getLineHTMLForExport"
 
 		},
-		"client_hooks" : {			
+		"client_hooks" : {
 		 	"collectContentLineBreak": "ep_tables2/static/js/contentcollector:collectContentLineBreak",
 		 	"collectContentLineText": "ep_tables2/static/js/contentcollector:collectContentLineText",
-			"aceKeyEvent": "ep_tables2/static/js/datatables.js:aceKeyEvent",
-			"aceStartLineAndCharForPoint": "ep_tables2/static/js/datatables.js:aceStartLineAndCharForPoint",
-			"aceEndLineAndCharForPoint": "ep_tables2/static/js/datatables.js:aceEndLineAndCharForPoint",
-			"aceAttribsToClasses": "ep_tables2/static/js/datatables.js:aceAttribsToClasses",
+			"aceKeyEvent": "ep_tables2/static/js/datatables:aceKeyEvent",
+			"aceStartLineAndCharForPoint": "ep_tables2/static/js/datatables:aceStartLineAndCharForPoint",
+			"aceEndLineAndCharForPoint": "ep_tables2/static/js/datatables:aceEndLineAndCharForPoint",
+			"aceAttribsToClasses": "ep_tables2/static/js/datatables:aceAttribsToClasses",
 			"acePostWriteDomLineHTML": "ep_tables2/static/js/datatables:acePostWriteDomLineHTML",
 			"aceInitialized": "ep_tables2/static/js/datatables:aceInitialized",
 			"postAceInit": "ep_tables2/static/js/datatables:postAceInit",
