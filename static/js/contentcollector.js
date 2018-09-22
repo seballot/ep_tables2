@@ -24,7 +24,7 @@ exports.collectContentLineText= function (hook, context) {
                     txt = "{\"payload\":[[\"";
                     break;
                 } else if (elementName == 'bracketAndcomma') {
-                    txt = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\"}";
+                    txt = n.innerHTML;
                     break;
                 }
             }

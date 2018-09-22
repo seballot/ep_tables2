@@ -1,10 +1,10 @@
 if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = function () {
         var dRenderer = {
             render: function (params, element, attributes) {
-		// Strange behaviour from IE. 
+		        // Strange behaviour from IE. 
                 // It comes here 2 times per row, so I have to stop rendering a second time to avoid desctruction of the rendering
-		if (params != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) return;
-
+		        if (params != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) return;
+                
                 var renderer = new DatatablesRenderer.Renderer();
                 if (params == "timeslider") {
                   var regex1 = new RegExp('(^\<span\ class=""\>)', 'i');
@@ -40,19 +40,18 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     authors: {}
                 };
             },
-            buildTabularData: function (tblJSONObj, tblPropsJSString) {
+            buildTabularData: function (tblJSONObj, tblProperties) {
                 var htmlTbl = "";
                 var tblId = tblJSONObj.tblId;
                 var tblClass = tblJSONObj.tblClass;
                 var tdClass = tblJSONObj.tdClass;
                 var trClass = tblJSONObj.trClass;
                 var payload = tblJSONObj.payload;
-                var tblProperties = {};
-                try {
-                    tblProperties = JSON.parse(tblPropsJSString);
-                } catch (error) {
+          
+                if (!tblProperties || tblProperties.length == 0) {
                     tblProperties = this.createDefaultTblProperties();
                 }
+                
                 var isFirstRow = typeof (tblProperties) == 'undefined' || tblProperties == null || typeof (tblProperties.isFirstRow) == 'undefined'? false : tblProperties.isFirstRow;
                 var rowAttrs = tblProperties.rowAttrs;
                 var singleRowAttrs = rowAttrs.singleRowAttrs;
@@ -124,8 +123,8 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                             htmlTbl += "<td name='tData' " + colVAlign + " style='" + printViewTblTDStyles + cellStyles + lastCellBorder + " border-left:" + tblBorderWidth + "px solid " + tblBorderColor + ";" + borderTop + "' >" + tds[i] + "" + "<br value='tblBreak'></td>" + delimCell
                         }
                     }
-                    var bracketAndcomma = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\"}";
-                    htmlTbl += "<td name='bracketAndcomma' class='  hide-el overhead' style='display:none;'>" + bracketAndcomma + "</td>";
+                    var bracketAndcomma = "\"]],\"tblId\":\"1\",\"tblClass\":\"data-tables\", \"tblProperties\":" + JSON.stringify(tblProperties) + "}";
+                    htmlTbl += "<td name='bracketAndcomma' class=' hide-el overhead' style='display:none;'>" + bracketAndcomma + "</td>";
                     htmlTbl += "</tr>";
                 }
                 htmlTbl += "</tbody></table>";
@@ -193,7 +192,17 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var html = "";
                 try {
                     JSONCode = JSON.parse(code);
-                    html = this.buildTabularData(JSONCode, attributes);
+                    tblProperties = JSONCode.tblProperties;
+                    otherProps = attributes ? JSON.parse(attributes) : null;
+
+                    if (tblProperties && attributes) {                        
+                        tblProperties = Object.assign(tblProperties, otherProps);
+                    }
+
+                    if (!tblProperties && attributes) {
+                        tblProperties = JSON.parse(attributes);
+                    }
+                    html = this.buildTabularData(JSONCode, tblProperties);
                 } catch (error) {}
                 return html;
             },
