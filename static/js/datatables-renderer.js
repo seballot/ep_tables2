@@ -60,12 +60,12 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var tblWidth = typeof (tblProperties) == 'undefined' || tblProperties == null ? "100" : tblProperties.width || "100";
                 var tblHeight = typeof (tblProperties) == 'undefined' || tblProperties == null ? "15" : tblProperties.height || "15";
                 var tblBorderWidth = typeof (tblProperties) == 'undefined' || tblProperties == null ? 0 : tblProperties.borderWidth || 0;
-                var tblBorderColor = typeof (tblProperties) == 'undefined' || tblProperties == null ? "#000000" : tblProperties.borderColor || "#000000";
+                var tblBorderColor = typeof (tblProperties) == 'undefined' || tblProperties == null ? "grey" : tblProperties.borderColor || "grey";
                 var currRow = tblProperties.currRowAuthorIdx;
                 var currCell = tblProperties.currCellAuthorIdx;
                 var authors = tblProperties.authors;
-                var printViewTBlStyles = "table-layout:fixed !important;border-collapse:collapse!important;font-family:Trebuchet MS!important;";
-                var printViewTblTDStyles = "font-size: 1em!important;line-height: 1em!important;padding: 3px 7px 2px!important;word-wrap: break-word!important;"
+                var printViewTBlStyles = "table-layout:fixed !important;border-collapse:collapse!important;";
+                var printViewTblTDStyles = "padding: 5px 7px;word-wrap: break-word!important;"
                 var htmlTbl = "<table class='" + tblClass + "' style='" + printViewTBlStyles + "background-color:white;width:" + tblWidth + "%!important;height:" + tblHeight + "px!important;'><tbody>";
                 var bordersBottom = "border-bottom:" + tblBorderWidth + "px solid " + tblBorderColor;
                 var bordersTop = "border-top:" + tblBorderWidth + "px solid " + tblBorderColor;

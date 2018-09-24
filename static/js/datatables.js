@@ -340,14 +340,17 @@ exports.postAceInit = function (hook, context) {
                     menu.cfg.setProperty("xy", [30 + addX, 36 + addY - scrollY]);
                 }
             }
+            var timerSelectedOnHover;
             $('table td').hover(function () {
+                clearTimeout(timerSelectedOnHover);
+                $('table td').removeClass('selected');
                 for (var x = 0; x <= $(this).index(); x++) {
                     for (var y = 0; y <= $(this).parent().index(); y++) {
                         $(this).parent().parent().children().eq(y).children().eq(x).addClass('selected');
                     }
                 }
             }, function () {
-                $('table td').removeClass('selected');
+                timerSelectedOnHover = setTimeout(function() { $('table td').removeClass('selected'); }, 200);
             });
             $('table td').hover(function () {
                 xVal = this.getAttribute('value')
