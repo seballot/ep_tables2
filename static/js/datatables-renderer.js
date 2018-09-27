@@ -1,28 +1,28 @@
 if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = function () {
         var dRenderer = {
-            render: function (params, element, attributes) {
+            render: function (context, element, attributes) {
 		        // Strange behaviour from IE. 
                 // It comes here 2 times per row, so I have to stop rendering a second time to avoid desctruction of the rendering
-		        if (params != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) return;
+		        if (context != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) return;
                 
                 var renderer = new DatatablesRenderer.Renderer();
-                if (params == "timeslider") {
+                if (context == "timeslider") {
                   var regex1 = new RegExp('(^\<span\ class=""\>)', 'i');
                   var regex2 = new RegExp('(\<\/span\>)$', 'i');
                   code = renderer.htmlspecialchars_decode(element.innerHTML)
                            .replace(regex1, '')
                            .replace(regex2, '');
-                } else if (params == "export") {
+                } else if (context == "export") {
                   code = element.text;
                 } else if (element.innerText) code = element.innerText;
                 else code = element.textContent;
 
-                if (params == "export") {
+                if (context == "export") {
                   // For export, I need to send back the formatted text
-                  return renderer.getHtml(code, attributes);
+                  return renderer.getHtml(code, attributes, context);
                 } else {
                   // For others, I need to modify the content of the element
-                  element.innerHTML = renderer.getHtml(code, attributes);
+                  element.innerHTML = renderer.getHtml(code, attributes, context);
                 }
             }
         }; // end of dRenderer
@@ -40,7 +40,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     authors: {}
                 };
             },
-            buildTabularData: function (tblJSONObj, tblProperties) {
+            buildTabularData: function (tblJSONObj, tblProperties, renderingContext) {
                 var htmlTbl = "";
                 var tblId = tblJSONObj.tblId;
                 var tblClass = tblJSONObj.tblClass;
@@ -63,8 +63,9 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var tblBorderColor = typeof (tblProperties) == 'undefined' || tblProperties == null ? "grey" : tblProperties.borderColor || "grey";
                 var currRow = tblProperties.currRowAuthorIdx;
                 var currCell = tblProperties.currCellAuthorIdx;
-                var authors = tblProperties.authors;
+                var authors = tblProperties.authors;printViewTBlStyles
                 var printViewTBlStyles = "table-layout:fixed !important;border-collapse:collapse!important;";
+                if (renderingContext == "export") printViewTBlStyles += "margin-bottom: -17px;";
                 var printViewTblTDStyles = "padding: 5px 7px;word-wrap: break-word!important;"
                 var htmlTbl = "<table class='" + tblClass + "' style='" + printViewTBlStyles + "background-color:white;width:" + tblWidth + "%!important;height:" + tblHeight + "px!important;'><tbody>";
                 var bordersBottom = "border-bottom:" + tblBorderWidth + "px solid " + tblBorderColor;
@@ -187,7 +188,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
               data = data.replace(/(https?:\/\/[^\s]+)/ig, "<a href='\$1' target='blank'>\$1</a>");
               return data;
             },
-            getHtml: function (code, attributes) {
+            getHtml: function (code, attributes, renderingContext) {
                 var JSONCode = "";
                 var html = "";
                 try {
@@ -202,7 +203,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     if (!tblProperties && attributes) {
                         tblProperties = JSON.parse(attributes);
                     }
-                    html = this.buildTabularData(JSONCode, tblProperties);
+                    html = this.buildTabularData(JSONCode, tblProperties, renderingContext);
                 } catch (error) {}
                 return html;
             },
