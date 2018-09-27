@@ -1057,6 +1057,20 @@ exports.aceEndLineAndCharForPoint = function (hook, context) {
 };
 exports.aceKeyEvent = function (hook, context) {
     var specialHandled = false;
+
+    var currLineNumber = context.rep.selStart[0];
+    // if trying to delete the line after table, we prevent this, refs Issue #22
+    if (context.evt.key == "Backspace" && currLineNumber > 0) {
+        var currentLine = context.rep.lines.atIndex(currLineNumber);
+        var previousLine = context.rep.lines.atIndex(currLineNumber -1);
+        
+        // if current line is empty and previous line is a Table, then we prevent the backspace action
+        if (currentLine.text.length < 1 && previousLine.text.indexOf("data-tables") != -1) {
+            context.evt.preventDefault();
+            return true;
+        }
+    }   
+
     try {
         Datatables.context = context;
         if (Datatables.isFocused()) {
@@ -1322,6 +1336,7 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
                         this.performDocApplyTblAttrToRow(rep.selStart, this.createDefaultTblProperties(authors));
                     }
                 }
+                this.context.editorInfo.ace_doReturnKey();
                 this.updateAuthorAndCaretPos(rep.selStart[0] - rows + 1);
                 return;
             }
