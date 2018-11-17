@@ -1,0 +1,61 @@
+#table-menu-button button:before {
+  content: "\F0CE";
+}
+
+#table-context-menu {
+  width: auto;
+  display:none;
+  position: absolute;
+  z-index: 100;
+  padding: 0;
+}
+
+#table-context-menu ul {
+  list-style: none;
+  padding: 6px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+#table-context-menu .menu-item {
+  padding: 2px 10px;
+}
+#table-context-menu .menu-item:hover { 
+  background-color: gainsboro;
+}
+
+#table-context-menu .menu-item a { color: inherit; }
+
+
+#create-table-container {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 0 !important;
+  width: auto;
+}
+
+#tbl_prop_create_table:after{
+  content: "▶";
+  font-size: 9px;
+  padding-top: 2px;
+  float: right;
+  opacity: .8;
+}
+
+#new-table-size {
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+#new-table-size-selector tr td {
+  border: 1px solid #d7d7d7;
+  height: 1px;
+  padding: 7px;
+  width: 11px;
+  background-color: #fbfbfb;
+  border-radius: 1px;
+}
+#new-table-size-selector tr td.selected {
+  border: 1px solid #789dce;
+  background-color: #b3d4ff;
+}
