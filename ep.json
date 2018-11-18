@@ -3,10 +3,10 @@
 	{
 		"name": "tables",
 		"hooks" : {
-			"eejsBlock_styles": "ep_tables2/static/js/datatables:eejsBlock_styles",
-			"eejsBlock_scripts": "ep_tables2/static/js/datatables:eejsBlock_scripts",
-			"eejsBlock_editbarMenuLeft": "ep_tables2/static/js/datatables:eejsBlock_editbarMenuLeft",
-			"eejsBlock_timesliderScripts": "ep_tables2/static/js/datatables:eejsBlock_timesliderScripts",
+			"eejsBlock_styles": "ep_tables2/static/js/index:eejsBlock_styles",
+			"eejsBlock_scripts": "ep_tables2/static/js/index:eejsBlock_scripts",
+			"eejsBlock_editbarMenuLeft": "ep_tables2/static/js/index:eejsBlock_editbarMenuLeft",
+			"eejsBlock_timesliderScripts": "ep_tables2/static/js/index:eejsBlock_timesliderScripts",
       "getLineHTMLForExport" : "ep_tables2/export2html:getLineHTMLForExport"
 
 		},
@@ -19,9 +19,7 @@
 			"aceAttribsToClasses": "ep_tables2/static/js/datatables:aceAttribsToClasses",
 			"acePostWriteDomLineHTML": "ep_tables2/static/js/datatables:acePostWriteDomLineHTML",
 			"aceInitialized": "ep_tables2/static/js/datatables:aceInitialized",
-			"postAceInit": "ep_tables2/static/js/datatables:postAceInit",
-			"disableAuthorColorsForThisLine": "ep_tables2/static/js/linestylefilter:disableAuthorColorsForThisLine",
-			"aceEditEvent": "ep_tables2/static/js/datatables:aceEditEvent"
+			"postAceInit": "ep_tables2/static/js/initialisation:postAceInit"
 		}
 	}]
 }

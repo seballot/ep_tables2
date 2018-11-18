@@ -6,152 +6,68 @@ if (typeof (require) != 'undefined') {
   }
 }
 
-var $tblContextMenu;
-
-// Bind the event handler to the toolbar buttons
-exports.postAceInit = function (hook, context) { 
-
-  openContextMenu = function (init) {
-    if (!$tblContextMenu) initContextMenu();
-    $tblContextMenu.css({'top': $('#editbar').outerHeight(), 'left': $('#table-menu-button').offset().left - 12}).toggle();
-  };
-
-   hideContextMenu = function() {
-    $tblContextMenu.hide();
-  }
-
-  initContextMenu = function() {    
-    $tblContextMenu = $('#table-context-menu').appendTo('body');
-
-    // Displaying the matrix to choose the new table size
-    $('#tbl_prop_create_table').hover(function() { 
-      $('#create-table-container').show();
-    });
-    $tblContextMenu.find('.menu-item:not(#tbl_prop_create_table)').hover(function() { 
-      $('#create-table-container').hide();
-    });
-
-    // Selecting the size of the table to create
-    var timerSelectedOnHover;
-    $('#new-table-size-selector td').hover(function () {
-      clearTimeout(timerSelectedOnHover);
-      $('#new-table-size-selector td').removeClass('selected');
-      for (var x = 0; x <= $(this).index(); x++) {
-        for (var y = 0; y <= $(this).parent().index(); y++) {
-          $(this).parent().parent().children().eq(y).children().eq(x).addClass('selected');
-        }
-      }
-    }, function () {
-      timerSelectedOnHover = setTimeout(function() { $('#new-table-size-selector td').removeClass('selected'); }, 200);
-    });
-    $('#new-table-size-selector td').hover(function () {
-      xVal = this.getAttribute('value')
-      yVal = $(this).closest("tr")[0].getAttribute("value");
-      $("#new-table-size").html(xVal + " X " + yVal);
-    });
-    $("td", "#new-table-size-selector").click(function (e) {
-      context.ace.callWithAce(function (ace) {
-        ace.ace_doDatatableOptions('addTbl', 'addTblX' + $("#new-table-size").text());
-      }, 'tblOptions', true);
-      hideContextMenu();
-      return false;
-    });
-
-    // Handle menu action click
-    $tblContextMenu.find('.menu-item[data-action]').click(function() {      
-      var action = $(this).attr('data-action');
-      context.ace.callWithAce(function (ace) {
-        ace.ace_doDatatableOptions(action);
-      }, 'tblOptions', true);
-      hideContextMenu();
-      return false;
-    });    
-  }
-
-  $('#table-menu-button').click(openContextMenu);  
-  
-};
-// Once ace is initialized, we set ace_doDatatableOptions and bind it to the context
-exports.aceInitialized = function (hook, context) {
-  var editorInfo = context.editorInfo;
-  editorInfo.ace_doDatatableOptions = _(Datatables.doDatatableOptions).bind(context);
-};
 exports.acePostWriteDomLineHTML = function (hook_name, args, cb) {
-  // Iterate through the child nodes (spans) and point SyntaxHighlighter at them
+  var node = args.node;
+  // var initialNode = args.node;
+  // Do nothing if the line is not a table line
+  if (node.innerHTML.indexOf("data-tables") == -1) return;
+  // Sometime, on initialisation, the table is rendered two times
+  // If <tbody> exist inside DOM, that's means that the table has already been rendered
+  if (node.innerHTML.indexOf("<tbody>") != -1) return;
 
-  // Do nothing if the line is not a table line (args.node.tagName -> to check if in timeslider page)
-  if(!args.node.tagName && args.node.innerHTML.indexOf("data-tables") == -1) return;
 
-  if (!args.node.tagName && args.node.innerHTML && args.node.innerHTML.indexOf("data-tables") != -1){
-    // For the Timeslider
-    var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
-    DatatablesRenderer.render("timeslider", args.node, dtAttrs);
-  } else {
+  $node = $(args.node);
+  // console.log("--- STARTS ---");
+  // console.log("HTML", $node.html());
+
+  
+  // if (!args.node.tagName && args.node.innerHTML && args.node.innerHTML.indexOf("data-tables") != -1){
+  //   // For the Timeslider
+  //   var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
+  //   DatatablesRenderer.render("timeslider", args.node, dtAttrs);
+  // } else {
     // For the Pad
-    var children = args.node.children;
-
-    lineText = args.node.children[0].innerText?args.node.children[0].innerText:args.node.children[0].textContent;
-    lineText_end  = args.node.children[0].innerText?args.node.children[children.length -1].innerText:args.node.children[children.length -1].textContent;
-
-    // Case when etherpad interact with the content of a cell and breaks the table line into several lines (like when writing an url inside a cell)
-    // In that case, we have to regroup everything before rendering the line.
-    if (children.length > 1 && lineText.indexOf("payload") != -1 && lineText_end.indexOf("data-tables") != -1) {
-    for (var i = 1; i < children.length; i++) {
-
-      if (args.node.children[0].innerText) {
-      args.node.children[0].innerText += args.node.children[i].innerText;
-      args.node.children[i].innerText = "";
-      } else {
-      args.node.children[0].textContent += args.node.children[i].textContent;
-      args.node.children[i].textContent = "";
-      }
-      args.node.children[i] = null;
+    
+    while(node.children.length == 1) {
+      node = node.children[0];
+      // console.log("SKIP", node.tagName);
     }
 
+    // CONCATENATE MULTIPLE NODES INTO ONE
+    if (node.children.length > 0) {  
+      // console.log("CONCATENATE CHILDREN");    
+      // Case when etherpad interact with the content of a cell and breaks the block into several blocks (like when applying bold ot italic style)
+      // In that case, we have to regroup everything before rendering the line.
+      var parts = node.children[0].innerHTML.split('{"payload":[["');
+      node.children[0].innerHTML = '{"payload":[["' + parts.join('');
+      // console.log("CHILD 0", node.children[0].innerHTML);
+      for (var i = 1; i < node.children.length; i++) {
+        innerHTML = node.children[i].innerHTML;        
+        innerHTML = innerHTML.replace(/(<.+>)","/ig, '","\$1');
+        // console.log("CHILD " + i, innerHTML);
+        node.children[0].innerHTML += innerHTML;
+        node.children[i].innerHTML = "";
+        node.children[i] = null;
+      }
+      node = node.children[0];  
+    }
+
+    // RENDER NODE
     var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
     dtAttrs = dtAttrs || "";
-    DatatablesRenderer.render({}, args.node.children[0], dtAttrs);
+    DatatablesRenderer.render({}, node, dtAttrs);
     exports.Datatables.attributes = null;
 
-    } else {
-    for (var i = 0; i < children.length; i++) {
-      if (args.node.children[i].className.indexOf("list") != -1 || args.node.children[i].className.indexOf("tag") != -1 || args.node.children[i].className.indexOf("url") != -1) continue;
-      var lineText = "";
-      if (args.node.children[i].innerText) lineText = args.node.children[i].innerText;
-      else lineText = args.node.children[i].textContent;
-      if (lineText && lineText.indexOf("data-tables") != -1) {
-        var dtAttrs = typeof (exports.Datatables) != 'undefined' ? exports.Datatables.attributes : null;
-        dtAttrs = dtAttrs || "";
-        DatatablesRenderer.render({}, args.node.children[i], dtAttrs);
-        exports.Datatables.attributes = null;
-      }
-    }
-    }
-  }
+    // initialNode.innerHTML = node.innerHTML;
+  // }
 }
-exports.eejsBlock_timesliderScripts = function (hook_name, args, cb) {
-  args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesScriptsTimeslider.ejs");
-}
-exports.eejsBlock_scripts = function (hook_name, args, cb) {
-  args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesScripts.ejs");
-}
-exports.eejsBlock_editbarMenuLeft = function (hook_name, args, cb) {
-  args.content = args.content + require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/datatablesEditbarButtons.ejs");
-}
-exports.eejsBlock_styles = function (hook_name, args, cb) {
-  args.content = require('ep_etherpad-lite/node/eejs/').require("ep_tables2/templates/styles.ejs") + args.content;
-}
-// Our heading attribute will result in a heaading:h1... :h6 class
+
 exports.aceAttribsToClasses = function (hook, context) {
   Datatables.attributes = null;
   if (context.key == 'tblProp') {
     Datatables.attributes = context.value;
     return ['tblProp:' + context.value];
   }
-}
-exports.aceEditEvent = function (hook, context) {
-/*  console.log("---------------------------");
-  console.log(context);*/
 }
 exports.aceStartLineAndCharForPoint = function (hook, context) {
 	var selStart = null;
@@ -178,6 +94,13 @@ exports.aceEndLineAndCharForPoint = function (hook, context) {
     console.log('error ' + error);
   }
 };
+
+// Once ace is initialized, we set ace_doDatatableOptions and bind it to the context
+exports.aceInitialized = function (hook, context) {
+  var editorInfo = context.editorInfo;
+  editorInfo.ace_doDatatableOptions = _(Datatables.doDatatableOptions).bind(context);
+};
+
 exports.aceKeyEvent = function (hook, context) {
   var specialHandled = false;
 
@@ -228,6 +151,8 @@ exports.aceKeyEvent = function (hook, context) {
   //console.log(' ace key evt specialHandled ',specialHandled);
   return specialHandled;
 };
+
+
 if (typeof (Datatables) == 'undefined') var Datatables = function () {
     // Get the text within an element
     // Doesn't do any normalising, returns a string
@@ -305,23 +230,14 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
       return rowEndOffset;
     }
     /**
-
 			current row index, 
-
 			td index ,
-
 			the length of leftover text of the current cell,
-
 			current row start offset,
-
 			current row end offset,
-
 			current td start offset,
-
 			current td end offset,
-
 			and cellCaretPos
-
 		*/
     dt.getFocusedTdInfo = function (payload, colStart) {
       var payloadOffset = colStart - this.vars.OVERHEAD_LEN_PRE;
@@ -470,20 +386,24 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
       var func = 'insertTblRow()';
       var rep = this.context.rep;
       try {
-        var newText = "";
         var currLineText = rep.lines.atIndex(rep.selStart[0]).text;
+        console.log("INSERT ROW | lineText", currLineText);
         var payload = JSON.parse(currLineText).payload;
+        console.log("Payload", payload);
         var currTdInfo = this.getFocusedTdInfo(payload, rep.selStart[1]);
+        console.log("currTdInfo", currTdInfo);
         var currRow = currTdInfo.row;
         var lastRowOffSet = 0;
         var start = [],
           end = [];
         start[0] = rep.selStart[0], start[1] = rep.selStart[1];
         end[0] = rep.selStart[0], end[1] = rep.selStart[1];
+        console.log("start", start, "end", end);
         if (aboveOrBelow == 'addA') {
           // If we add a row above the first row, the new row must have the prop 'isFirstRow' and we must remove 'isFirstRow' from current row
           var isFirstRow = false;
           var jsoTblProp = this.getLineTableProperty(start[0]);
+          console.log("table prop", jsoTblProp);
           if (isFirstRow = jsoTblProp.isFirstRow) {
             delete jsoTblProp['isFirstRow'];
             this.updateTblPropInAPool(-1, -1, jsoTblProp, start);
@@ -1263,13 +1183,17 @@ if (typeof (Datatables) == 'undefined') var Datatables = function () {
       }
     };
     dt.getLineTableProperty = function (lineNum) {
+      console.log("getLineTableProperty", lineNum);
       var rep = this.context.rep;
       // get "tblProp" attribute of first char of line
       var aline = rep.alines[lineNum];
+      console.log("Aline", aline);
       if (aline) {
         var opIter = Changeset.opIterator(aline);
+        console.log("opIter", opIter);
         if (opIter.hasNext()) {
           var tblJSString = Changeset.opAttributeValue(opIter.next(), 'tblProp', rep.apool);
+          console.log("tblJSString", tblJSString);
           try {
             return JSON.parse(tblJSString);
           } catch (error) {

@@ -1,29 +1,38 @@
 if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = function () {
         var dRenderer = {
             render: function (context, element, attributes) {
-		        // Strange behaviour from IE. 
-                // It comes here 2 times per row, so I have to stop rendering a second time to avoid desctruction of the rendering
-		        if (context != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) return;
-                
-                var renderer = new DatatablesRenderer.Renderer();
-                if (context == "timeslider") {
-                  var regex1 = new RegExp('(^\<span\ class=""\>)', 'i');
-                  var regex2 = new RegExp('(\<\/span\>)$', 'i');
-                  code = renderer.htmlspecialchars_decode(element.innerHTML)
-                           .replace(regex1, '')
-                           .replace(regex2, '');
-                } else if (context == "export") {
-                  code = element.text;
-                } else if (element.innerText) code = element.innerText;
-                else code = element.textContent;
+                // console.log("Render element", element.innerHTML, element);
 
-                if (context == "export") {
-                  // For export, I need to send back the formatted text
-                  return renderer.getHtml(code, attributes, context);
-                } else {
-                  // For others, I need to modify the content of the element
-                  element.innerHTML = renderer.getHtml(code, attributes, context);
-                }
+                var renderer = new DatatablesRenderer.Renderer();
+                element.innerHTML = renderer.getHtml(element.innerHTML, attributes, context);
+		        
+                // Strange behaviour from IE. 
+                // It comes here 2 times per row, so I have to stop rendering a second time to avoid desctruction of the rendering
+		        // if (context != "timeslider" && element.innerHTML && element.innerHTML.indexOf("payload") != 2) { console.log("DO NOTHING"); return; }
+                
+                // var renderer = new DatatablesRenderer.Renderer();
+                // // while(element.children.length > 0 && element.className != "table-data") {
+                // //     element = element.children[0];
+                // //     console.log("getting child element", element.innerHTML, element);
+                // // }
+                // if (context == "timeslider") {
+                //   var regex1 = new RegExp('(^\<span\ class=""\>)', 'i');
+                //   var regex2 = new RegExp('(\<\/span\>)$', 'i');
+                //   code = renderer.htmlspecialchars_decode(element.innerHTML)
+                //            .replace(regex1, '')
+                //            .replace(regex2, '');
+                // } else if (context == "export") {
+                //   code = element.text;
+                // } else if (element.innerText) code = element.innerHTML;
+                // else code = element.innerHTML;
+
+                // if (context == "export") {
+                //   // For export, I need to send back the formatted text
+                //   return renderer.getHtml(code, attributes, context);
+                // } else {
+                //   // For others, I need to modify the content of the element
+                //   element.innerHTML = renderer.getHtml(code, attributes, context);
+                // }
             }
         }; // end of dRenderer
         dRenderer.Renderer = function () {
@@ -74,8 +83,11 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                 var rows = tblJSONObj.payload;
                 var evenRowBgColor = typeof (rowAttrs) == 'undefined' || rowAttrs == null ? "#FFFFFF" : rowAttrs.evenBgColor || "#FFFFFF";
                 var oddRowBgColor = typeof (rowAttrs) == 'undefined' || rowAttrs == null ? null : rowAttrs.oddBgColor || null;
+
+                // the tables contains only one row, no need to do a FOR
                 for (var j = 0, rl = rows.length; j < rl; j++) {
                     var tds = rows[j];
+                    console.log("draw table", tds, tblProperties);
                     var rowBgColor = oddRowBgColor;
                     if (!rowBgColor) {
                         rowBgColor = evenRowBgColor;
@@ -83,10 +95,7 @@ if (typeof (DatatablesRenderer) == 'undefined') var DatatablesRenderer = functio
                     htmlTbl += "<tr style='vertical-align:" + rowVAlign + ";background-color:" + rowBgColor + "; " + bordersBottom + "!important;";
                     if (isFirstRow) htmlTbl += " " + bordersTop + "!important;";
                     htmlTbl += "' class='" + trClass + "'>";
-                    var preHeader = "";
-                    if (j == 0) {
-                        preHeader = "{\"payload\":[[\"";
-                    }
+                    var preHeader = j == 0 ? "{\"payload\":[[\"" : "";
                     htmlTbl += "<td  name='payload' class='hide-el overhead' style='display:none;'>" + preHeader + "</td>";
                     var singleRowAttr = typeof (singleRowAttrs) == 'undefined' || singleRowAttrs == null ? null : singleRowAttrs[j];
                     for (var i = 0, tl = tds.length; i < tl; i++) {

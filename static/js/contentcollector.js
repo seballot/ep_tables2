@@ -23,7 +23,7 @@ exports.collectContentLineText= function (hook, context) {
                 } else if (elementName == 'payload') {
                     txt = "{\"payload\":[[\"";
                     break;
-                } else if (elementName == 'bracketAndcomma') {
+                } else if (elementName == 'bracketAndcomma') { // contains the table properties stringified
                     txt = n.innerHTML;
                     break;
                 }
